@@ -1,6 +1,7 @@
 package multicam
 
 // #include <multicam.h>
+// #include <stdlib.h>
 import "C"
 import "unsafe"
 
@@ -24,6 +25,11 @@ func GetParamStr(handle Handle, id ParamID) (string, error) {
 
 // SetParamInt sets a parameter int value.
 func SetParamInt(handle Handle, id ParamID, val int) error {
+	status := C.McSetParamInt(C.MCHANDLE(handle), C.MCPARAMID(id), C.int(val))
+	if status != C.MC_OK {
+		return ErrCannotSetParam
+	}
+
 	return nil
 }
 
