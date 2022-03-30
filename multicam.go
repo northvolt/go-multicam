@@ -1,4 +1,4 @@
-package go-multicam
+package multicam
 
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {

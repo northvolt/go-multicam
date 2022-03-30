@@ -1,4 +1,4 @@
-package go-multicam
+package multicam
 
 /*
 #cgo CXXFLAGS:   --std=c++11
