@@ -42,6 +42,22 @@ const (
 	ChannelStateIdle   ChannelStateID = C.MC_ChannelState_IDLE
 )
 
+const (
+	ColorFormatY8      = C.MC_ColorFormat_Y8
+	ColorFormatY10     = C.MC_ColorFormat_Y10
+	ColorFormatY10P    = C.MC_ColorFormat_Y10P
+	ColorFormatY12     = C.MC_ColorFormat_Y12
+	ColorFormatY14     = C.MC_ColorFormat_Y14
+	ColorFormatY16     = C.MC_ColorFormat_Y16
+	ColorFormatBayer8  = C.MC_ColorFormat_BAYER8
+	ColorFormatBayer10 = C.MC_ColorFormat_BAYER10
+	ColorFormatBayer12 = C.MC_ColorFormat_BAYER12
+	ColorFormatBayer14 = C.MC_ColorFormat_BAYER14
+	ColorFormatBayer16 = C.MC_ColorFormat_BAYER16
+)
+
+const IndeterminateLength = C.MC_INDETERMINATE
+
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {
 	status := C.McOpenDriver(nil)
