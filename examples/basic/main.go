@@ -18,5 +18,13 @@ func main() {
 		return
 	}
 
-	fmt.Println("Driver was opened, now closing...")
+	fmt.Println("Driver was opened...")
+	bc, err := mc.GetParamInt(mc.ConfigurationHandle, mc.BoardCountParam)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Boards detected:", bc)
+	fmt.Println("Done.")
 }
