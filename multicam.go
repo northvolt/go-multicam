@@ -12,9 +12,34 @@ const (
 type ParamID uint32
 
 const (
+	BoardCountParam    ParamID = C.MC_BoardCount
+	BufferPitchParam   ParamID = C.MC_BufferPitch
+	CamFileParam       ParamID = C.MC_CamFile
+	ChannelStateParam  ParamID = C.MC_ChannelState
+	ColorFormatParam   ParamID = C.MC_ColorFormat
+	ConnectorParam     ParamID = C.MC_Connector
+	DriverIndexParam   ParamID = C.MC_DriverIndex
 	ErrorHandlingParam ParamID = C.MC_ErrorHandling
 	ErrorLogParam      ParamID = C.MC_ErrorLog
-	BoardCountParam    ParamID = C.MC_BoardCount
+	ImageSizeXParam    ParamID = C.MC_ImageSizeX
+	ImageSizeYParam    ParamID = C.MC_ImageSizeY
+	SeqLengthFrParam   ParamID = C.MC_SeqLength_Fr
+	SignalEnableParam  ParamID = C.MC_SignalEnable
+	SurfaceAddrParam   ParamID = C.MC_SurfaceAddr
+)
+
+type SignalID uint32
+
+const (
+	AcquisitionFailureSignal SignalID = C.MC_SIG_ACQUISITION_FAILURE
+	SurfaceProcessingSignal  SignalID = C.MC_SIG_SURFACE_PROCESSING
+)
+
+type ChannelStateID uint32
+
+const (
+	ChannelStateActive ChannelStateID = C.MC_ChannelState_ACTIVE
+	ChannelStateIdle   ChannelStateID = C.MC_ChannelState_IDLE
 )
 
 // OpenDriver starts up the Multicam drivers.
