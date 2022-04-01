@@ -55,3 +55,15 @@ func GetParamInt(handle Handle, id ParamID) (int, error) {
 
 	return int(val), nil
 }
+
+// GetParamPtr gets a parameter Ptr value.
+func GetParamPtr(handle Handle, id ParamID) (unsafe.Pointer, error) {
+	var val C.PVOID
+
+	status := C.McGetParamPtr(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
+	if status != C.MC_OK {
+		return nil, ErrCannotGetParam
+	}
+
+	return unsafe.Pointer(val), nil
+}
