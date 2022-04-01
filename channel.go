@@ -22,9 +22,13 @@ import (
 
 const UninitializedChannel = 0
 
+type SignalInfo C.MCSIGNALINFO
+
+var channelCallbackHandlers []func(*SignalInfo)
+
 type Channel struct {
 	channel Handle
-	handler func(*C.MCSIGNALINFO)
+	handler func(*SignalInfo)
 }
 
 // NewChannel creates a new Multicam Channel.
@@ -86,7 +90,7 @@ func (c *Channel) GetParamInt(id ParamID) (int, error) {
 
 // RegisterCallback allows setting a callback handler function for this channel.
 // TODO(re): allow calling the specific callback handler
-func (c *Channel) RegisterCallback(handler func(*C.MCSIGNALINFO)) error {
+func (c *Channel) RegisterCallback(handler func(*SignalInfo)) error {
 	c.handler = handler
 
 	status := C.SetCallbackHandler(C.uint(c.channel))
@@ -94,12 +98,23 @@ func (c *Channel) RegisterCallback(handler func(*C.MCSIGNALINFO)) error {
 		return ErrCannotRegisterCallback
 	}
 
+	// TODO(re): allow for separate handlers per channel
+	if len(channelCallbackHandlers) == 0 {
+		channelCallbackHandlers = append(channelCallbackHandlers, handler)
+	}
+
 	return nil
 }
 
 //export GoCallbackHandler
-func GoCallbackHandler(SignalInfo *C.MCSIGNALINFO) {
-	fmt.Println("callback received")
-	// TODO: use SignalInfo to determine which channel callback it is.
+func GoCallbackHandler(info *SignalInfo) {
+	fmt.Println("callback received from", info.Signal)
+
+	// TODO(re): allow for separate handlers per channel
+	if len(channelCallbackHandlers) > 0 && channelCallbackHandlers[0] != nil {
+		channelCallbackHandlers[0](info)
+		return
+	}
+
 	return
 }

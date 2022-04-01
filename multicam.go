@@ -28,11 +28,14 @@ const (
 	SurfaceAddrParam   ParamID = C.MC_SurfaceAddr
 )
 
-type SignalID uint32
+const (
+	AcquisitionFailureSignal ParamID = C.MC_SIG_ACQUISITION_FAILURE
+	SurfaceProcessingSignal  ParamID = C.MC_SIG_SURFACE_PROCESSING
+)
 
 const (
-	AcquisitionFailureSignal SignalID = C.MC_SIG_ACQUISITION_FAILURE
-	SurfaceProcessingSignal  SignalID = C.MC_SIG_SURFACE_PROCESSING
+	SignalEnableOn  int = C.MC_SignalEnable_ON
+	SignalEnableOff int = C.MC_SignalEnable_OFF
 )
 
 type ChannelStateID uint32

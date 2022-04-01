@@ -2,6 +2,13 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/jpeg"
+	"os"
+	"reflect"
+	"strings"
+	"time"
+	"unsafe"
 
 	mc "github.com/northvolt/go-multicam"
 )
@@ -36,17 +43,36 @@ func main() {
 
 	SetupCamera()
 
-	// TODO: Register our Callback function for the MultiCam asynchronous signals.
-	// status = McRegisterCallback(hChannel, McCallback, NULL);
+	ch.RegisterCallback(cbhandler)
 
-	// TODO: Enable the signals we need:
 	// MC_SIG_SURFACE_PROCESSING: acquisition done and locked for processing
+	if err := ch.SetParamInt(mc.SignalEnableParam+mc.SurfaceProcessingSignal, mc.SignalEnableOn); err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	// MC_SIG_ACQUISITION_FAILURE: acquisition failed.
-	// status = McSetParamInt(hChannel, MC_SignalEnable + MC_SIG_SURFACE_PROCESSING, MC_SignalEnable_ON);
+	if err := ch.SetParamInt(mc.SignalEnableParam+mc.AcquisitionFailureSignal, mc.SignalEnableOn); err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	// status = McSetParamInt(hChannel, MC_SignalEnable + MC_SIG_ACQUISITION_FAILURE, MC_SignalEnable_ON);
+	// Start Acquisitions for this channel.
+	if err := ch.SetParamInt(mc.ChannelStateParam, int(mc.ChannelStateActive)); err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer func() {
+		if err := ch.SetParamInt(mc.ChannelStateParam, int(mc.ChannelStateIdle)); err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("Done.")
+	}()
 
-	fmt.Println("Done.")
+	for {
+		time.Sleep(time.Second)
+	}
 }
 
 func SetupCamera() {
@@ -102,4 +128,55 @@ func SetupCamera() {
 		fmt.Println(err)
 		return
 	}
+}
+
+func cbhandler(info *mc.SignalInfo) {
+	switch mc.ParamID(info.Signal) {
+	case mc.SurfaceProcessingSignal:
+		pimg, err := mc.GetParamPtr(mc.Handle(info.SignalInfo), mc.SurfaceAddrParam)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("frame received at address", pimg)
+		h := &reflect.SliceHeader{
+			Data: uintptr(pimg),
+			Len:  int(x * y),
+			Cap:  int(x * y),
+		}
+		ptr := *(*[]byte)(unsafe.Pointer(h))
+
+		img := image.NewGray(image.Rect(0, 0, x, y))
+		img.Pix = ptr
+
+		saveImage(img)
+	case mc.AcquisitionFailureSignal:
+		fmt.Println("frame error")
+	default:
+		fmt.Println("other error")
+	}
+}
+
+func saveImage(img *image.Gray) {
+	f, err := os.Create(filename(time.Now()) + ".jpg")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+
+	opt := jpeg.Options{
+		Quality: 90,
+	}
+	err = jpeg.Encode(f, img, &opt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func filename(t time.Time) string {
+	id := t.UTC().Format(time.RFC3339Nano)
+	id = strings.ReplaceAll(id, ":", "-")
+	return id
 }
