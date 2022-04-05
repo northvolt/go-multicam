@@ -56,6 +56,16 @@ func GetParamInt(handle Handle, id ParamID) (int, error) {
 	return int(val), nil
 }
 
+// SetParamPtr sets a parameter Ptr value.
+func SetParamPtr(handle Handle, id ParamID, val unsafe.Pointer) error {
+	status := C.McSetParamPtr(C.MCHANDLE(handle), C.MCPARAMID(id), C.PVOID(val))
+	if status != C.MC_OK {
+		return ErrCannotSetParam
+	}
+
+	return nil
+}
+
 // GetParamPtr gets a parameter Ptr value.
 func GetParamPtr(handle Handle, id ParamID) (unsafe.Pointer, error) {
 	var val C.PVOID
@@ -66,4 +76,26 @@ func GetParamPtr(handle Handle, id ParamID) (unsafe.Pointer, error) {
 	}
 
 	return unsafe.Pointer(val), nil
+}
+
+// SetParamInst sets a parameter Inst (Handle) value.
+func SetParamInst(handle Handle, id ParamID, val Handle) error {
+	status := C.McSetParamInst(C.MCHANDLE(handle), C.MCPARAMID(id), C.MCHANDLE(val))
+	if status != C.MC_OK {
+		return ErrCannotSetParam
+	}
+
+	return nil
+}
+
+// GetParamInst gets a parameter Inst (Handle) value.
+func GetParamInst(handle Handle, id ParamID) (Handle, error) {
+	var val C.MCHANDLE
+
+	status := C.McGetParamInst(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
+	if status != C.MC_OK {
+		return nil, ErrCannotGetParam
+	}
+
+	return Handle(val), nil
 }

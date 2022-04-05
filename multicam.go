@@ -6,36 +6,54 @@ import "C"
 type Handle uint32
 
 const (
-	ConfigurationHandle Handle = C.MC_CONFIGURATION
+	ConfigurationHandle  Handle = C.MC_CONFIGURATION
+	DefaultSurfaceHandle Handle = C.MC_DEFAULT_SURFACE_HANDLE
 )
 
 type ParamID uint32
 
 const (
-	BoardCountParam    ParamID = C.MC_BoardCount
-	BufferPitchParam   ParamID = C.MC_BufferPitch
-	CamFileParam       ParamID = C.MC_CamFile
-	ChannelStateParam  ParamID = C.MC_ChannelState
-	ColorFormatParam   ParamID = C.MC_ColorFormat
-	ConnectorParam     ParamID = C.MC_Connector
-	DriverIndexParam   ParamID = C.MC_DriverIndex
-	ErrorHandlingParam ParamID = C.MC_ErrorHandling
-	ErrorLogParam      ParamID = C.MC_ErrorLog
-	ImageSizeXParam    ParamID = C.MC_ImageSizeX
-	ImageSizeYParam    ParamID = C.MC_ImageSizeY
-	SeqLengthFrParam   ParamID = C.MC_SeqLength_Fr
-	SignalEnableParam  ParamID = C.MC_SignalEnable
-	SurfaceAddrParam   ParamID = C.MC_SurfaceAddr
+	BoardCountParam     ParamID = C.MC_BoardCount
+	BufferPitchParam    ParamID = C.MC_BufferPitch
+	CamFileParam        ParamID = C.MC_CamFile
+	ChannelStateParam   ParamID = C.MC_ChannelState
+	ClusterParam        ParamID = C.MC_Cluster
+	ColorFormatParam    ParamID = C.MC_ColorFormat
+	ConnectorParam      ParamID = C.MC_Connector
+	DriverIndexParam    ParamID = C.MC_DriverIndex
+	ElapsedPgParam      ParamID = C.MC_Elapsed_Pg
+	ErrorHandlingParam  ParamID = C.MC_ErrorHandling
+	ErrorLogParam       ParamID = C.MC_ErrorLog
+	ForceTrigParam      ParamID = C.MC_ForceTrig
+	ImageSizeXParam     ParamID = C.MC_ImageSizeX
+	ImageSizeYParam     ParamID = C.MC_ImageSizeY
+	MinBufferPitchParam ParamID = C.MC_MinBufferPitch
+	SeqLengthFrParam    ParamID = C.MC_SeqLength_Fr
+	SeqLengthPgParam    ParamID = C.MC_SeqLength_Pg
+	SignalEnableParam   ParamID = C.MC_SignalEnable
+	SurfaceAddrParam    ParamID = C.MC_SurfaceAddr
+	SurfaceCountParam   ParamID = C.MC_SurfaceCount
+	SurfaceIndexParam   ParamID = C.MC_SurfaceIndex
+	SurfacePitchParam   ParamID = C.MC_SurfacePitch
+	SurfaceSizeParam    ParamID = C.MC_SurfaceSize
+	SurfaceStateParam   ParamID = C.MC_SurfaceState
 )
 
 const (
-	AcquisitionFailureSignal ParamID = C.MC_SIG_ACQUISITION_FAILURE
-	SurfaceProcessingSignal  ParamID = C.MC_SIG_SURFACE_PROCESSING
+	AcquisitionFailureSignal    ParamID = C.MC_SIG_ACQUISITION_FAILURE
+	ClusterUnavailableSignal    ParamID = C.MC_SIG_CLUSTER_UNAVAILABLE
+	EndChannelActivitySignal    ParamID = C.MC_SIG_END_CHANNEL_ACTIVITY
+	FrameTriggerViolationSignal ParamID = C.MC_SIG_FRAMETRIGGER_VIOLATION
+	SurfaceProcessingSignal     ParamID = C.MC_SIG_SURFACE_PROCESSING
 )
 
 const (
 	SignalEnableOn  int = C.MC_SignalEnable_ON
 	SignalEnableOff int = C.MC_SignalEnable_OFF
+)
+
+const (
+	SurfaceStateFree int = C.MC_SurfaceState_FREE
 )
 
 type ChannelStateID uint32
