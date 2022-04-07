@@ -88,6 +88,16 @@ func (c *Channel) GetParamInt(id ParamID) (int, error) {
 	return GetParamInt(c.channel, id)
 }
 
+// SetParamInst sets a parameter instance value for this channel.
+func (c *Channel) SetParamInst(id ParamID, val Handle) error {
+	return SetParamInst(c.channel, id, val)
+}
+
+// GetParamInst gets a parameter instance value for this channel.
+func (c *Channel) GetParamInst(id ParamID) (Handle, error) {
+	return GetParamInst(c.channel, id)
+}
+
 // RegisterCallback allows setting a callback handler function for this channel.
 // TODO(re): allow calling the specific callback handler
 func (c *Channel) RegisterCallback(handler func(*SignalInfo)) error {
