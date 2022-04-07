@@ -133,7 +133,8 @@ func SetupCamera() {
 func cbhandler(info *mc.SignalInfo) {
 	switch mc.ParamID(info.Signal) {
 	case mc.SurfaceProcessingSignal:
-		pimg, err := mc.GetParamPtr(mc.Handle(info.SignalInfo), mc.SurfaceAddrParam)
+		s := mc.SurfaceForHandle(mc.Handle(info.SignalInfo))
+		pimg, err := s.GetParamPtr(mc.SurfaceAddrParam)
 		if err != nil {
 			fmt.Println(err)
 			return

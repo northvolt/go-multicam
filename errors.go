@@ -10,4 +10,7 @@ var (
 	ErrCannotCreateChannel    = errors.New("cannot create MultiCam channel")
 	ErrCannotDeleteChannel    = errors.New("cannot delete MultiCam channel")
 	ErrCannotRegisterCallback = errors.New("cannot register callback for MultiCam channel")
+	ErrInvalidSurface         = errors.New("invalid surface")
+	ErrCannotCreateSurface    = errors.New("cannot create MultiCam surface")
+	ErrCannotDeleteSurface    = errors.New("cannot delete MultiCam surface")
 )
