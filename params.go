@@ -94,7 +94,7 @@ func GetParamInst(handle Handle, id ParamID) (Handle, error) {
 
 	status := C.McGetParamInst(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
 	if status != C.MC_OK {
-		return nil, ErrCannotGetParam
+		return 0, ErrCannotGetParam
 	}
 
 	return Handle(val), nil
