@@ -10,21 +10,22 @@ package multicam
 		GoCallbackHandler(SignalInfo);
 	}
 
-	static MCSTATUS SetCallbackHandler(MCHANDLE handle)
+	static MCSTATUS SetCallbackHandler(MCHANDLE handle, PVOID context)
 	{
-		return McRegisterCallback(handle, MCCallbackHandler, NULL);
+		return McRegisterCallback(handle, MCCallbackHandler, context);
 	}
 */
 import "C"
-import (
-	"fmt"
-)
 
 const UninitializedChannel = 0
 
 type SignalInfo C.MCSIGNALINFO
 
-var channelCallbackHandlers []func(*SignalInfo)
+var channelCallbackHandlers map[int]func(*SignalInfo)
+
+func initChannels() {
+	channelCallbackHandlers = make(map[int]func(*SignalInfo))
+}
 
 type Channel struct {
 	channel Handle
@@ -99,30 +100,28 @@ func (c *Channel) GetParamInst(id ParamID) (Handle, error) {
 }
 
 // RegisterCallback allows setting a callback handler function for this channel.
-// TODO(re): allow calling the specific callback handler
+// TODO(re): allow setting context data
 func (c *Channel) RegisterCallback(handler func(*SignalInfo)) error {
 	c.handler = handler
 
-	status := C.SetCallbackHandler(C.uint(c.channel))
+	status := C.SetCallbackHandler(C.uint(c.channel), C.PVOID(nil))
 	if status != C.MC_OK {
 		return ErrCannotRegisterCallback
 	}
 
-	// TODO(re): allow for separate handlers per channel
-	if len(channelCallbackHandlers) == 0 {
-		channelCallbackHandlers = append(channelCallbackHandlers, handler)
-	}
+	channelCallbackHandlers[int(c.channel)] = handler
 
 	return nil
 }
 
 //export GoCallbackHandler
 func GoCallbackHandler(info *SignalInfo) {
-	fmt.Println("callback received from", info.Signal)
+	if len(channelCallbackHandlers) == 0 {
+		return
+	}
 
-	// TODO(re): allow for separate handlers per channel
-	if len(channelCallbackHandlers) > 0 && channelCallbackHandlers[0] != nil {
-		channelCallbackHandlers[0](info)
+	if cb, ok := channelCallbackHandlers[int(info.Instance)]; ok {
+		cb(info)
 		return
 	}
 

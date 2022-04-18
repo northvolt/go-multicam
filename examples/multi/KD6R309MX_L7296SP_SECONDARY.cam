@@ -1,0 +1,126 @@
+;*********************************************************************************************
+; Camera Manufacturer: MITSUBISHI
+; Camera Model: KD6R309MX
+; Camera Configuration: Line-Scan, Free-run, 7320 pixels, permanent exposure
+; Board: Grablink
+; Minimum MultiCam Version: 6.5
+; Last update: 31 Mar 2020
+;*********************************************************************************************
+;*********************************************************************************************
+;Disclaimer:
+;
+;These CAM-files are provided to you free of charge and "as is".
+;You should not assume that these CAM-files are error-free or
+;suitable for any purpose whatsoever. 
+;Nor should you assume that all functional modes of the camera are
+;covered by these CAM files or that the associated documentation is complete.
+;EURESYS does not give any representation or warranty that these CAM-files are
+;free of any defect or error or suitable for any purpose.
+;EURESYS shall not be liable, in contract, in torts or otherwise,
+;for any damages, loss, costs, expenses or other claims for compensation,
+;including those asserted by third parties, arising out of or in connection
+;with the use of these CAM-files.
+;*********************************************************************************************
+;
+; ==Begin of "Camera properties Section"==
+;
+; -Camera Specification category-
+;
+    Camera =            MyCameraLink;
+    CamConfig =         LxxxxSP;
+    Imaging =           LINE;           <== LINE TDI
+    Spectrum =          BW;             <== BW COLOR ...
+;
+; -Camera Features category-
+    TapConfiguration =  MEDIUM_4T8;     <== BASE_1T8 BASE_1T10 BASE_1T24 ...
+    TapGeometry =       4X;             <== 1X 1X2 2X ...
+    Expose =            INTPRM;         
+    Readout =           INTCTL;         
+    ColorMethod =       NONE;           <== NONE PRISM TRILINEAR RGB
+;
+; --Downstream signals--
+    FvalMode =          FN;             
+    LvalMode =          LA;             
+    DvalMode =          DN;             <== DN DG
+;
+; --Upstream signals--
+    CC1Usage =          LOW;            <== LOW HIGH SOFT
+    CC2Usage =          LOW;            <== LOW HIGH SOFT
+    CC3Usage =          LOW;            <== LOW HIGH SOFT
+    CC4Usage =          LOW;            <== LOW HIGH SOFT
+;
+; -Camera Timing category-
+    Hactive_Px =        7320;           <==
+    HSyncAft_Tk =       0;              <==
+    LineRate_Hz =       43000;          <==
+;
+; ==End of "Camera properties Section"==
+;*********************************************************************************************
+; ==Begin of "System properties Section"==
+;
+; -Acquisition Control category-
+    AcquisitionMode =   WEB;            <== WEB PAGE LONGPAGE
+    TrigMode =          IMMEDIATE;      <== IMMEDIATE HARD SOFT COMBINED
+    NextTrigMode =      REPEAT;         <== REPEAT (when AcquisitionMode = WEB or LONGPAGE)
+;                                           <== SAME REPEAT HARD SOFT COMBINED (when AcquisitionMode = PAGE)
+    EndTrigMode =       AUTO;           <== AUTO HARD (when AcquisitionMode = LONGPAGE)
+;                                           <== AUTO (when AcquisitionMode = WEB or PAGE)
+    BreakEffect =       FINISH;         <== FINISH ABORT
+    SeqLength_Pg =      -1;             <== -1 1 .. 65534 (when AcquisitionMode = PAGE)
+    SeqLength_Ln =      -1;             <== -1 1 .. 65534 (when AcquisitionMode = WEB or LONGPAGE)
+    PageLength_Ln =     1000;            <== 1 .. 65535
+;
+; -Trigger Control category-
+;       The set of values and the default value assigned by MultiCam for the parameter TrigCtl are board specific!
+;       If the default value is not adequate for your application, it is then necessary to edit the value and
+;       to remove the leading semi-column of one of the following 3 lines
+;   TrigCtl =           ISO;                <== Full/DualBase/Base: ISO DIFF
+;   TrigCtl =           ITTL;               <== Avenue/Express: TTL ITTL I12V LVDS
+;   TrigCtl =           ITTL;               <== Value/Expert 2: TTL ITTL I12V
+    TrigEdge =          GOHIGH;         <== GOHIGH GOLOW
+    TrigFilter =        MEDIUM;         <== OFF ON MEDIUM STRONG
+    TrigLine =          NOM;            <== NOM ...
+;
+;       The following 4 parameters are relevant only when EndTrigMode = HARD!
+;       The set of values and the default value assigned by MultiCam for the parameter EndTrigCtl are board specific!
+;       If the default value is not adequate for your application, it is then necessary to edit the value and
+;       to remove the leading semi-column of one of the following 3 lines
+;   EndTrigCtl =        ISO;                <== Full/DualBase/Base: ISO DIFF
+;   EndTrigCtl =        ITTL;               <== Avenue/Express: TTL ITTL I12V LVDS
+;   EndTrigCtl =        ITTL;               <== Value/Expert 2: TTL ITTL I12V
+    EndTrigEdge =       GOLOW;          <== GOHIGH GOLOW
+    EndTrigFilter =     MEDIUM;         <== OFF ON MEDIUM STRONG
+    EndTrigLine =       NOM;            <== NOM ...
+;
+; -Exposure & Strobe Control categories-
+    StrobeMode =        NONE;           <== To free the Strobe Output IO port
+;
+; -Encoder Control category-
+    LineCaptureMode =   ALL;            
+    LineRateMode =      CAMERA;         
+
+;
+; ==End of "System properties Section"==
+;*********************************************************************************************
+; ==Begin of "Grabber properties Section"==
+;
+; -Grabber Configuration, Timing & Conditioning categories-
+    GrabWindow =        NOBLACK;        <== NOBLACK MAN ...
+    WindowX_Px =        7320;           <== (when GrabWindow=MAN)
+    OffsetX_Px =        0;              <== (when GrabWindow=MAN)
+;
+; -Look-Up Tables category-
+;   The Look-Up Table operator is available exclusively on Grablink Full/DualBase/Base boards.
+;   LUT configuration parameters can be inserted here if required by the application
+;
+; -Cluster category-
+    ColorFormat =       Y8;             <== Y8 Y10 RGB24 RGB24PL ...
+    ImageFlipX =        OFF;            <== OFF ON
+    ImageFlipY =        OFF;            <== OFF ON
+;
+; End of "Grabber properties Section"
+;*********************************************************************************************
+; End of File
+;=============
+
+AcqTimeout_ms = -1;
