@@ -86,6 +86,8 @@ func OpenDriver() error {
 		return ErrCannotOpenDriver
 	}
 
+	initChannels()
+
 	return nil
 }
 
