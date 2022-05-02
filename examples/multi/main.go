@@ -36,27 +36,22 @@ func main() {
 	fmt.Println("Boards detected:", bc)
 
 	// Create grabber for each board
-	g1, err := createGrabber(1, "KD6R309MX_L7296RG_PRIMARY.cam")
+	g2, err := createGrabber(1, "KD6R309MX_L7296SP_SECONDARY.cam")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	g2, err := createGrabber(2, "KD6R309MX_L7296RG_SECONDARY.cam")
+	// primary last
+	g1, err := createGrabber(0, "KD6R309MX_L7296SP_SECONDARY.cam")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	g1.primary = true
 
-	g3, err := createGrabber(3, "KD6R309MX_L7296SP_SECONDARY.cam")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	go g1.start()
 	go g2.start()
-	go g3.start()
+	go g1.start()
 
 	for {
 		time.Sleep(time.Second)
@@ -68,6 +63,7 @@ type grabber struct {
 	camfile     string
 	x, y, pitch int
 	ch          *mc.Channel
+	primary     bool
 }
 
 func createGrabber(board int, camfile string) (*grabber, error) {
@@ -86,25 +82,25 @@ func createGrabber(board int, camfile string) (*grabber, error) {
 
 func (g *grabber) setup() {
 	if err := g.ch.SetParamInt(mc.DriverIndexParam, g.board); err != nil {
-		fmt.Println(err)
+		g.Println("DriverIndexParam", err)
 		return
 	}
 
 	// For all GrabLink boards but Grablink DualBase
 	if err := g.ch.SetParamStr(mc.ConnectorParam, "M"); err != nil {
-		fmt.Println(err)
+		g.Println("ConnectorParam", err)
 		return
 	}
 
 	// Choose the CAM file
 	if err := g.ch.SetParamStr(mc.CamFileParam, g.camfile); err != nil {
-		fmt.Println(err)
+		g.Println("CamFileParam", err)
 		return
 	}
 
 	// Set the color format.
 	if err := g.ch.SetParamInt(mc.ColorFormatParam, mc.ColorFormatY8); err != nil {
-		fmt.Println(err)
+		g.Println("ColorFormatParam", err)
 		return
 	}
 
@@ -133,7 +129,7 @@ func (g *grabber) setup() {
 
 	// The number of images to acquire.
 	if err := g.ch.SetParamInt(mc.SeqLengthFrParam, mc.IndeterminateLength); err != nil {
-		fmt.Println(err)
+		g.Println("SeqLengthFrParam", err)
 		return
 	}
 
@@ -141,25 +137,34 @@ func (g *grabber) setup() {
 }
 
 func (g *grabber) start() {
+	fmt.Println("Starting grabber", g.board)
+
 	// MC_SIG_SURFACE_PROCESSING: acquisition done and locked for processing
 	if err := g.ch.SetParamInt(mc.SignalEnableParam+mc.SurfaceProcessingSignal, mc.SignalEnableOn); err != nil {
-		fmt.Println(err)
+		g.Println("SurfaceProcessingSignal", err)
 		return
 	}
 
 	// MC_SIG_ACQUISITION_FAILURE: acquisition failed.
 	if err := g.ch.SetParamInt(mc.SignalEnableParam+mc.AcquisitionFailureSignal, mc.SignalEnableOn); err != nil {
-		fmt.Println(err)
+		g.Println("AcquisitionFailureSignal", err)
 		return
 	}
 
 	// Start Acquisitions for this channel.
 	if err := g.ch.SetParamInt(mc.ChannelStateParam, int(mc.ChannelStateActive)); err != nil {
-		fmt.Println(err)
+		g.Println("ChannelStateParam", err)
 		return
 	}
 
 	defer g.stop()
+
+	if g.primary {
+		err := g.ch.SetParamStr(mc.ForceTrigParam, "TRIG")
+		if err != nil {
+			g.Println("ForceTrigParam", err)
+		}
+	}
 
 	for {
 		time.Sleep(time.Second)
@@ -205,7 +210,7 @@ func (g *grabber) cbhandler(info *mc.SignalInfo) {
 }
 
 func (g *grabber) saveImage(img *image.Gray) {
-	filename := fmt.Sprintf("%s_%d.jpg", filetime(time.Now()))
+	filename := fmt.Sprintf("%s_%d.jpg", filetime(time.Now()), g.board)
 	f, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
@@ -227,4 +232,8 @@ func filetime(t time.Time) string {
 	id := t.UTC().Format(time.RFC3339Nano)
 	id = strings.ReplaceAll(id, ":", "-")
 	return id
+}
+
+func (g *grabber) Println(name string, err error) {
+	fmt.Println(g.board, name, err)
 }
