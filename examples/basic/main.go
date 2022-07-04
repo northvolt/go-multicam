@@ -26,5 +26,15 @@ func main() {
 	}
 
 	fmt.Println("Boards detected:", bc)
+	for i := 0; i < bc; i++ {
+		bn, err := mc.GetParamStr(mc.DefaultBoardHandle+mc.Handle(i), mc.BoardNameParam)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println(bn)
+	}
+
 	fmt.Println("Done.")
 }
