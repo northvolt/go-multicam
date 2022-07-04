@@ -8,12 +8,15 @@ type Handle uint32
 const (
 	ConfigurationHandle  Handle = C.MC_CONFIGURATION
 	DefaultSurfaceHandle Handle = C.MC_DEFAULT_SURFACE_HANDLE
+	DefaultBoardHandle   Handle = C.MC_BOARD
 )
 
 type ParamID uint32
 
 const (
 	BoardCountParam     ParamID = C.MC_BoardCount
+	BoardNameParam      ParamID = C.MC_BoardName
+	BoardTypeParam      ParamID = C.MC_BoardType
 	BufferPitchParam    ParamID = C.MC_BufferPitch
 	CamFileParam        ParamID = C.MC_CamFile
 	ChannelStateParam   ParamID = C.MC_ChannelState
@@ -28,6 +31,7 @@ const (
 	ImageSizeXParam     ParamID = C.MC_ImageSizeX
 	ImageSizeYParam     ParamID = C.MC_ImageSizeY
 	MinBufferPitchParam ParamID = C.MC_MinBufferPitch
+	SerialNumberParam   ParamID = C.MC_SerialNumber
 	SeqLengthFrParam    ParamID = C.MC_SeqLength_Fr
 	SeqLengthPgParam    ParamID = C.MC_SeqLength_Pg
 	SignalEnableParam   ParamID = C.MC_SignalEnable
