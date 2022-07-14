@@ -32,9 +32,12 @@ func main() {
 
 	fmt.Println("Driver was opened...")
 
-	//  Create a channel.
-	ch = mc.NewChannel()
-	err := ch.Create()
+	// Get board
+	brd := mc.BoardForIndex(1)
+
+	//  Create a channel for board.
+	var err error
+	ch, err = brd.CreateChannel()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -76,12 +79,6 @@ func main() {
 }
 
 func SetupCamera() {
-	// Link the channel to a board. Here we take the first board.
-	if err := ch.SetParamInt(mc.DriverIndexParam, 1); err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	// For all GrabLink boards but Grablink DualBase
 	if err := ch.SetParamStr(mc.ConnectorParam, "M"); err != nil {
 		fmt.Println(err)

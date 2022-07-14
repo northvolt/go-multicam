@@ -13,4 +13,5 @@ var (
 	ErrInvalidSurface         = errors.New("invalid surface")
 	ErrCannotCreateSurface    = errors.New("cannot create MultiCam surface")
 	ErrCannotDeleteSurface    = errors.New("cannot delete MultiCam surface")
+	ErrInvalidBoard           = errors.New("invalid board")
 )

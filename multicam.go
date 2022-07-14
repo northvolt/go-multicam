@@ -14,33 +14,39 @@ const (
 type ParamID uint32
 
 const (
-	BoardCountParam     ParamID = C.MC_BoardCount
-	BoardNameParam      ParamID = C.MC_BoardName
-	BoardTypeParam      ParamID = C.MC_BoardType
-	BufferPitchParam    ParamID = C.MC_BufferPitch
-	CamFileParam        ParamID = C.MC_CamFile
-	ChannelStateParam   ParamID = C.MC_ChannelState
-	ClusterParam        ParamID = C.MC_Cluster
-	ColorFormatParam    ParamID = C.MC_ColorFormat
-	ConnectorParam      ParamID = C.MC_Connector
-	DriverIndexParam    ParamID = C.MC_DriverIndex
-	ElapsedPgParam      ParamID = C.MC_Elapsed_Pg
-	ErrorHandlingParam  ParamID = C.MC_ErrorHandling
-	ErrorLogParam       ParamID = C.MC_ErrorLog
-	ForceTrigParam      ParamID = C.MC_ForceTrig
-	ImageSizeXParam     ParamID = C.MC_ImageSizeX
-	ImageSizeYParam     ParamID = C.MC_ImageSizeY
-	MinBufferPitchParam ParamID = C.MC_MinBufferPitch
-	SerialNumberParam   ParamID = C.MC_SerialNumber
-	SeqLengthFrParam    ParamID = C.MC_SeqLength_Fr
-	SeqLengthPgParam    ParamID = C.MC_SeqLength_Pg
-	SignalEnableParam   ParamID = C.MC_SignalEnable
-	SurfaceAddrParam    ParamID = C.MC_SurfaceAddr
-	SurfaceCountParam   ParamID = C.MC_SurfaceCount
-	SurfaceIndexParam   ParamID = C.MC_SurfaceIndex
-	SurfacePitchParam   ParamID = C.MC_SurfacePitch
-	SurfaceSizeParam    ParamID = C.MC_SurfaceSize
-	SurfaceStateParam   ParamID = C.MC_SurfaceState
+	BoardCountParam        ParamID = C.MC_BoardCount
+	BoardNameParam         ParamID = C.MC_BoardName
+	BoardIdentifierParam   ParamID = C.MC_BoardIdentifier
+	BoardIndexParam        ParamID = C.MC_BoardIndex
+	BoardPCIPositionParam  ParamID = C.MC_PciPosition
+	BoardSerialNumberParam ParamID = C.MC_SerialNumber
+	BoardTypeParam         ParamID = C.MC_BoardType
+	BufferPitchParam       ParamID = C.MC_BufferPitch
+	CamFileParam           ParamID = C.MC_CamFile
+	ChannelStateParam      ParamID = C.MC_ChannelState
+	ClusterParam           ParamID = C.MC_Cluster
+	ColorFormatParam       ParamID = C.MC_ColorFormat
+	ConnectorParam         ParamID = C.MC_Connector
+	DriverIndexParam       ParamID = C.MC_DriverIndex
+	ElapsedPgParam         ParamID = C.MC_Elapsed_Pg
+	ErrorHandlingParam     ParamID = C.MC_ErrorHandling
+	ErrorLogParam          ParamID = C.MC_ErrorLog
+	ForceTrigParam         ParamID = C.MC_ForceTrig
+	ImageSizeXParam        ParamID = C.MC_ImageSizeX
+	ImageSizeYParam        ParamID = C.MC_ImageSizeY
+	MinBufferPitchParam    ParamID = C.MC_MinBufferPitch
+	OutputConfigParam      ParamID = C.MC_OutputConfig
+	OutputStateParam       ParamID = C.MC_OutputState
+	SerialNumberParam      ParamID = C.MC_SerialNumber
+	SeqLengthFrParam       ParamID = C.MC_SeqLength_Fr
+	SeqLengthPgParam       ParamID = C.MC_SeqLength_Pg
+	SignalEnableParam      ParamID = C.MC_SignalEnable
+	SurfaceAddrParam       ParamID = C.MC_SurfaceAddr
+	SurfaceCountParam      ParamID = C.MC_SurfaceCount
+	SurfaceIndexParam      ParamID = C.MC_SurfaceIndex
+	SurfacePitchParam      ParamID = C.MC_SurfacePitch
+	SurfaceSizeParam       ParamID = C.MC_SurfaceSize
+	SurfaceStateParam      ParamID = C.MC_SurfaceState
 )
 
 const (
@@ -82,6 +88,11 @@ const (
 )
 
 const IndeterminateLength = C.MC_INDETERMINATE
+
+const (
+	// LED is id of built-in LED
+	LED = 25
+)
 
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {
