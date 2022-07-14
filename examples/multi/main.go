@@ -68,8 +68,10 @@ type grabber struct {
 
 func createGrabber(board int, camfile string) (*grabber, error) {
 	g := grabber{board: board, camfile: camfile}
-	g.ch = mc.NewChannel()
-	err := g.ch.Create()
+	brd := mc.BoardForIndex(board)
+
+	var err error
+	g.ch, err = brd.CreateChannel()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -81,11 +83,6 @@ func createGrabber(board int, camfile string) (*grabber, error) {
 }
 
 func (g *grabber) setup() {
-	if err := g.ch.SetParamInt(mc.DriverIndexParam, g.board); err != nil {
-		g.Println("DriverIndexParam", err)
-		return
-	}
-
 	// For all GrabLink boards but Grablink DualBase
 	if err := g.ch.SetParamStr(mc.ConnectorParam, "M"); err != nil {
 		g.Println("ConnectorParam", err)
