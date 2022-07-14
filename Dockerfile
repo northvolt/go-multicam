@@ -1,4 +1,4 @@
-# docker build --build-arg MULTICAM_RELEASE=6.18.3.4935 -t multicam:latest .
+# docker build --build-arg MULTICAM_RELEASE=6.18.3.4935 --build-arg EXAMPLE=blink -t multicam:latest .
 FROM ubuntu:22.04 AS multicam-base
 
 ARG MULTICAM_RELEASE=6.18.3.4935
@@ -23,8 +23,10 @@ RUN go version
 
 FROM multicam-golang AS multicam-app
 
+ARG EXAMPLE=basic
+
 COPY . /src/github.com/northvolt/go-multicam
 WORKDIR /src/github.com/northvolt/go-multicam
-RUN go build -o /src/basic ./examples/basic/
+RUN go build -o /mcexample ./examples/${EXAMPLE}/
 
-ENTRYPOINT ["/src/basic"]
+ENTRYPOINT ["/mcexample"]
