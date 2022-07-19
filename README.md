@@ -6,15 +6,58 @@ https://documentation.euresys.com/Products/MULTICAM/MULTICAM/Content/00_Home/hom
 
 This package currently only works on Linux platforms.
 
-To use it you must obtain a copy of the Euresys MultiCam SDK for Linux from Euresys directly.
 
 ## How To Use
 
-Coming soon.
+```go
+package main
+
+import (
+	"fmt"
+
+	mc "github.com/northvolt/go-multicam"
+)
+
+func main() {
+	if err := mc.OpenDriver(); err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer mc.CloseDriver()
+
+	fmt.Println("Driver was opened...")
+
+	bc, err := mc.GetParamInt(mc.ConfigurationHandle, mc.BoardCountParam)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Number of boards detected:", bc)
+
+	for i := 0; i < bc; i++ {
+		brd := mc.BoardForIndex(i)
+		bn, err := brd.GetParamStr(mc.BoardNameParam)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println("Board", i, "name:", bn)
+	}
+
+	fmt.Println("Done.")
+}
+```
+
 
 ## Installing
 
-Instructions will come later.
+To use it you must obtain a copy of the Euresys MultiCam SDK for Linux from Euresys directly. See:
+
+https://euresys.com/en/Support/Download-area
+
+The Euresys drivers for the board that you want to use must be installed on the Linux host operating system.
 
 
 ## Using with Docker
@@ -58,4 +101,4 @@ Done.
 
 ## Why it exists
 
-Computer vision applications written in Go can easily take advantage of multi-core concurrency while also having access to packages such as GoCV (https://gocv.io). The `go-multicam` package now makes is possible for Go programs to connect to cameras and line scanners that are generally used for industrial applications.
+Computer vision applications written in Go can easily take advantage of multi-core concurrency while also having access to packages such as GoCV (https://gocv.io). The `go-multicam` package now makes is possible for Go programs to connect to Euresys cameras and line scanners that are commonly used for industrial applications.
