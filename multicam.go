@@ -14,40 +14,46 @@ const (
 type ParamID uint32
 
 const (
-	BoardCountParam        ParamID = C.MC_BoardCount
-	BoardNameParam         ParamID = C.MC_BoardName
-	BoardNameChangeParam   ParamID = C.MC_NameBoard
-	BoardIdentifierParam   ParamID = C.MC_BoardIdentifier
-	BoardIndexParam        ParamID = C.MC_BoardIndex
-	BoardPCIPositionParam  ParamID = C.MC_PciPosition
-	BoardSerialNumberParam ParamID = C.MC_SerialNumber
-	BoardTypeParam         ParamID = C.MC_BoardType
-	BufferPitchParam       ParamID = C.MC_BufferPitch
-	CamFileParam           ParamID = C.MC_CamFile
-	ChannelStateParam      ParamID = C.MC_ChannelState
-	ClusterParam           ParamID = C.MC_Cluster
-	ColorFormatParam       ParamID = C.MC_ColorFormat
-	ConnectorParam         ParamID = C.MC_Connector
-	DriverIndexParam       ParamID = C.MC_DriverIndex
-	ElapsedPgParam         ParamID = C.MC_Elapsed_Pg
-	ErrorHandlingParam     ParamID = C.MC_ErrorHandling
-	ErrorLogParam          ParamID = C.MC_ErrorLog
-	ForceTrigParam         ParamID = C.MC_ForceTrig
-	ImageSizeXParam        ParamID = C.MC_ImageSizeX
-	ImageSizeYParam        ParamID = C.MC_ImageSizeY
-	MinBufferPitchParam    ParamID = C.MC_MinBufferPitch
-	OutputConfigParam      ParamID = C.MC_OutputConfig
-	OutputStateParam       ParamID = C.MC_OutputState
-	SerialNumberParam      ParamID = C.MC_SerialNumber
-	SeqLengthFrParam       ParamID = C.MC_SeqLength_Fr
-	SeqLengthPgParam       ParamID = C.MC_SeqLength_Pg
-	SignalEnableParam      ParamID = C.MC_SignalEnable
-	SurfaceAddrParam       ParamID = C.MC_SurfaceAddr
-	SurfaceCountParam      ParamID = C.MC_SurfaceCount
-	SurfaceIndexParam      ParamID = C.MC_SurfaceIndex
-	SurfacePitchParam      ParamID = C.MC_SurfacePitch
-	SurfaceSizeParam       ParamID = C.MC_SurfaceSize
-	SurfaceStateParam      ParamID = C.MC_SurfaceState
+	BoardCountParam            ParamID = C.MC_BoardCount
+	BoardNameParam             ParamID = C.MC_BoardName
+	BoardNameChangeParam       ParamID = C.MC_NameBoard
+	BoardIdentifierParam       ParamID = C.MC_BoardIdentifier
+	BoardIndexParam            ParamID = C.MC_BoardIndex
+	BoardPCIPositionParam      ParamID = C.MC_PciPosition
+	BoardSerialNumberParam     ParamID = C.MC_SerialNumber
+	BoardTypeParam             ParamID = C.MC_BoardType
+	BufferPitchParam           ParamID = C.MC_BufferPitch
+	CamFileParam               ParamID = C.MC_CamFile
+	ChannelStateParam          ParamID = C.MC_ChannelState
+	ClusterParam               ParamID = C.MC_Cluster
+	ColorFormatParam           ParamID = C.MC_ColorFormat
+	ConnectorParam             ParamID = C.MC_Connector
+	DriverIndexParam           ParamID = C.MC_DriverIndex
+	ElapsedPgParam             ParamID = C.MC_Elapsed_Pg
+	ErrorHandlingParam         ParamID = C.MC_ErrorHandling
+	ErrorLogParam              ParamID = C.MC_ErrorLog
+	ForceTrigParam             ParamID = C.MC_ForceTrig
+	ImageSizeXParam            ParamID = C.MC_ImageSizeX
+	ImageSizeYParam            ParamID = C.MC_ImageSizeY
+	MetadataContentParam       ParamID = C.MC_MetadataContent
+	MetadataGPPCInputLineParam ParamID = C.MC_MetadataGPPCInputLine
+	MetadataGPPCLocationParam  ParamID = C.MC_MetadataGPPCLocation
+	MetadataGPPCResetLineParam ParamID = C.MC_MetadataGPPCResetLine
+	MetadataInsertionParam     ParamID = C.MC_MetadataInsertion
+	MetadataLocationParam      ParamID = C.MC_MetadataLocation
+	MinBufferPitchParam        ParamID = C.MC_MinBufferPitch
+	OutputConfigParam          ParamID = C.MC_OutputConfig
+	OutputStateParam           ParamID = C.MC_OutputState
+	SerialNumberParam          ParamID = C.MC_SerialNumber
+	SeqLengthFrParam           ParamID = C.MC_SeqLength_Fr
+	SeqLengthPgParam           ParamID = C.MC_SeqLength_Pg
+	SignalEnableParam          ParamID = C.MC_SignalEnable
+	SurfaceAddrParam           ParamID = C.MC_SurfaceAddr
+	SurfaceCountParam          ParamID = C.MC_SurfaceCount
+	SurfaceIndexParam          ParamID = C.MC_SurfaceIndex
+	SurfacePitchParam          ParamID = C.MC_SurfacePitch
+	SurfaceSizeParam           ParamID = C.MC_SurfaceSize
+	SurfaceStateParam          ParamID = C.MC_SurfaceState
 )
 
 const (
@@ -93,6 +99,30 @@ const IndeterminateLength = C.MC_INDETERMINATE
 const (
 	// LED is id of built-in LED
 	LED = 25
+)
+
+const (
+	MetadataContentNone       = C.MC_MetadataContent_NONE
+	MetadataContentOneField   = C.MC_MetadataContent_ONE_FIELD
+	MetadataContentTwoField   = C.MC_MetadataContent_TWO_FIELD
+	MetadataContentThreeField = C.MC_MetadataContent_THREE_FIELD
+
+	MetadataGPPCInputLineNone          = C.MC_MetadataGPPCInputLine_NONE
+	MetadataGPPCInputLineIIN1          = C.MC_MetadataGPPCInputLine_IIN1
+	MetadataGPPCLocationNone           = C.MC_MetadataGPPCLocation_NONE
+	MetadataGPPCLocationInsteadLVALCNT = C.MC_MetadataGPPCLocation_INSTEAD_LVALCNT
+	MetadataGPPCLocationInsteadQCNT    = C.MC_MetadataGPPCLocation_INSTEAD_QCNT
+	MetadataGPPCResetLineNone          = C.MC_MetadataGPPCResetLine_NONE
+	MetadataGPPCResetLineIIN4          = C.MC_MetadataGPPCResetLine_IIN4
+
+	MetadataInsertionEnable  = C.MC_MetadataInsertion_ENABLE
+	MetadataInsertionDisable = C.MC_MetadataInsertion_DISABLE
+
+	MetadataLocationLeft        = C.MC_MetadataLocation_LEFT
+	MetadataLocationSparse1     = C.MC_MetadataLocation_SPARSE_1
+	MetadataLocationLeftBoarder = C.MC_MetadataLocation_LEFT_BOARDER
+	MetadataLocationTap10       = C.MC_MetadataLocation_TAP10
+	MetadataLocationLVALRISE    = C.MC_MetadataLocation_LVALRISE
 )
 
 // OpenDriver starts up the Multicam drivers.
