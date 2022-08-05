@@ -16,6 +16,7 @@ type ParamID uint32
 const (
 	BoardCountParam        ParamID = C.MC_BoardCount
 	BoardNameParam         ParamID = C.MC_BoardName
+	BoardNameChangeParam   ParamID = C.MC_NameBoard
 	BoardIdentifierParam   ParamID = C.MC_BoardIdentifier
 	BoardIndexParam        ParamID = C.MC_BoardIndex
 	BoardPCIPositionParam  ParamID = C.MC_PciPosition
