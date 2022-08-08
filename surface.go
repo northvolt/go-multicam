@@ -3,7 +3,10 @@ package multicam
 // #include <multicam.h>
 // #include <stdlib.h>
 import "C"
-import "unsafe"
+import (
+	"reflect"
+	"unsafe"
+)
 
 const UninitializedSurface = 0
 
@@ -81,4 +84,34 @@ func (s *Surface) SetParamPtr(id ParamID, val unsafe.Pointer) error {
 // GetParamPtr gets a parameter pointer value for this surface.
 func (s *Surface) GetParamPtr(id ParamID) (unsafe.Pointer, error) {
 	return GetParamPtr(s.h, id)
+}
+
+// Ptr returns a slice of bytes of the data in the underlying Surface.
+// Pass in the expected x and y dimensions of the surface.
+// Note that the memory for this slice is under the control of Multicam and so
+// may go away quickly, so copy the data elsewhere if you want to persist it.
+func (s *Surface) Ptr(x, y int) ([]byte, error) {
+	pimg, err := s.GetParamPtr(mc.SurfaceAddrParam)
+	if err != nil {
+		return nil, err
+	}
+	h := &reflect.SliceHeader{
+		Data: uintptr(pimg),
+		Len:  int(x * y),
+		Cap:  int(x * y),
+	}
+	ptr := *(*[]byte)(unsafe.Pointer(h))
+	return ptr, nil
+}
+
+// ToBytes returns a slice of bytes which is a copy of the Surface data. This slice is safe to use as it is a normal Go slice.
+func (s *Surface) ToBytes(x, y int) ([]byte, error) {
+	ptr, err := s.Ptr(x, y)
+	if err != nil {
+		return nil, err
+	}
+
+	data := make([]byte, x*y)
+	copy(data, ptr)
+	return data, nil
 }
