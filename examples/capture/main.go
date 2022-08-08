@@ -5,10 +5,8 @@ import (
 	"image"
 	"image/jpeg"
 	"os"
-	"reflect"
 	"strings"
 	"time"
-	"unsafe"
 
 	mc "github.com/northvolt/go-multicam"
 )
@@ -131,18 +129,11 @@ func cbhandler(info *mc.SignalInfo) {
 	switch mc.ParamID(info.Signal) {
 	case mc.SurfaceProcessingSignal:
 		s := mc.SurfaceForHandle(mc.Handle(info.SignalInfo))
-		pimg, err := s.GetParamPtr(mc.SurfaceAddrParam)
+		ptr, err := s.Ptr(x, y)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("frame received at address", pimg)
-		h := &reflect.SliceHeader{
-			Data: uintptr(pimg),
-			Len:  int(x * y),
-			Cap:  int(x * y),
-		}
-		ptr := *(*[]byte)(unsafe.Pointer(h))
 
 		img := image.NewGray(image.Rect(0, 0, x, y))
 		img.Pix = ptr
