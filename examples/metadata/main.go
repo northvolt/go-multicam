@@ -164,40 +164,12 @@ func cbhandler(info *mc.SignalInfo) {
 		switch content {
 		case mc.MetadataContentNone:
 			fmt.Println("No metadata")
-		case mc.MetadataContentOneField:
-			printlnOneField(md)
-		case mc.MetadataContentTwoField:
-			printlnOneField(md)
-			fmt.Println("count:", md.Count())
-		case mc.MetadataContentThreeField:
-			printlnOneField(md)
-			fmt.Println("count:", md.Count())
-			fmt.Println("qcount:", md.Qcount())
+		default:
+			fmt.Println(md)
 		}
 	case mc.AcquisitionFailureSignal:
 		fmt.Println("frame error")
 	default:
 		fmt.Println("other error")
 	}
-}
-
-func printlnOneField(md mc.Metadata) {
-	fmt.Printf("\r\n=================================================>")
-	fmt.Printf("\r\nIIN1    IIN2    IIN3    IIN4    DIN1    DIN2")
-	fmt.Printf("\r\n %s      %s      %s      %s      %s      %s",
-		showValue(md.IIN1()),
-		showValue(md.IIN2()),
-		showValue(md.IIN3()),
-		showValue(md.IIN4()),
-		showValue(md.DIN1()),
-		showValue(md.DIN2()))
-	fmt.Printf("\r\n------------------------------------------------->")
-	fmt.Println()
-}
-
-func showValue(b bool) string {
-	if b {
-		return "++"
-	}
-	return "--"
 }
