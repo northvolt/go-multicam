@@ -57,11 +57,16 @@ const (
 )
 
 const (
+	StartAcquisitionSignal      ParamID = C.MC_SIG_START_ACQUISITION_SEQUENCE
+	EndAcquisitionSignal        ParamID = C.MC_SIG_END_ACQUISITION_SEQUENCE
 	AcquisitionFailureSignal    ParamID = C.MC_SIG_ACQUISITION_FAILURE
 	ClusterUnavailableSignal    ParamID = C.MC_SIG_CLUSTER_UNAVAILABLE
 	EndChannelActivitySignal    ParamID = C.MC_SIG_END_CHANNEL_ACTIVITY
 	FrameTriggerViolationSignal ParamID = C.MC_SIG_FRAMETRIGGER_VIOLATION
 	SurfaceProcessingSignal     ParamID = C.MC_SIG_SURFACE_PROCESSING
+	SurfaceFilledSignal         ParamID = C.MC_SIG_SURFACE_FILLED
+	StartExposureSignal         ParamID = C.MC_SIG_START_EXPOSURE
+	EndExposureSignal           ParamID = C.MC_SIG_END_EXPOSURE
 )
 
 const (
