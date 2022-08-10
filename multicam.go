@@ -47,6 +47,7 @@ const (
 	SerialNumberParam          ParamID = C.MC_SerialNumber
 	SeqLengthFrParam           ParamID = C.MC_SeqLength_Fr
 	SeqLengthPgParam           ParamID = C.MC_SeqLength_Pg
+	SeqLengthLnParam           ParamID = C.MC_SeqLength_Ln
 	SignalEnableParam          ParamID = C.MC_SignalEnable
 	SurfaceAddrParam           ParamID = C.MC_SurfaceAddr
 	SurfaceCountParam          ParamID = C.MC_SurfaceCount
