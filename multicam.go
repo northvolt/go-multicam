@@ -14,6 +14,7 @@ const (
 type ParamID uint32
 
 const (
+	AcquisitionModeParam       ParamID = C.MC_AcquisitionMode
 	BoardCountParam            ParamID = C.MC_BoardCount
 	BoardNameParam             ParamID = C.MC_BoardName
 	BoardNameChangeParam       ParamID = C.MC_NameBoard
@@ -98,6 +99,16 @@ const (
 	ColorFormatBayer12 = C.MC_ColorFormat_BAYER12
 	ColorFormatBayer14 = C.MC_ColorFormat_BAYER14
 	ColorFormatBayer16 = C.MC_ColorFormat_BAYER16
+)
+
+const (
+	AcquisitionModeSnapshot = C.MC_AcquisitionMode_SNAPSHOT
+	AcquisitionModeHFR      = C.MC_AcquisitionMode_HFR
+	AcquisitionModePage     = C.MC_AcquisitionMode_PAGE
+	AcquisitionModeWeb      = C.MC_AcquisitionMode_WEB
+	AcquisitionModeLongPage = C.MC_AcquisitionMode_LONGPAGE
+	AcquisitionModeInvalid  = C.MC_AcquisitionMode_INVALID
+	AcquisitionModeVideo    = C.MC_AcquisitionMode_VIDEO
 )
 
 const IndeterminateLength = C.MC_INDETERMINATE
