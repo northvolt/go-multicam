@@ -91,7 +91,7 @@ func (s *Surface) GetParamPtr(id ParamID) (unsafe.Pointer, error) {
 // Note that the memory for this slice is under the control of Multicam and so
 // may go away quickly, so copy the data elsewhere if you want to persist it.
 func (s *Surface) Ptr(x, y int) ([]byte, error) {
-	pimg, err := s.GetParamPtr(mc.SurfaceAddrParam)
+	pimg, err := s.GetParamPtr(SurfaceAddrParam)
 	if err != nil {
 		return nil, err
 	}
