@@ -1,9 +1,9 @@
-# docker build --build-arg MULTICAM_RELEASE=6.18.3.4935 --build-arg EXAMPLE=blink -t multicam:latest .
-FROM ubuntu:22.04 AS multicam-base
+# docker build --build-arg MULTICAM_RELEASE=6.18.4.4961 --build-arg EXAMPLE=blink -t multicam:latest .
+FROM ubuntu:20.04 AS multicam-base
 
-ARG MULTICAM_RELEASE=6.18.3.4935
+ARG MULTICAM_RELEASE=6.18.4.4961
 
-RUN apt-get update && apt-get install -y apt-file file make gcc linux-headers-5.15.0-39-generic wget
+RUN apt-get update && apt-get install -y apt-file file make gcc linux-headers-5.15.0-46-generic wget
 COPY multicam-linux/multicam-linux-x86_64-${MULTICAM_RELEASE}.tar.gz /
 RUN tar xf multicam-linux-x86_64-${MULTICAM_RELEASE}.tar.gz
 WORKDIR /multicam-linux-x86_64-${MULTICAM_RELEASE}
