@@ -19,6 +19,8 @@ func main() {
 	}
 
 	fmt.Println("Driver was opened...")
+	fmt.Println("Go Multicam version", mc.Version(), mc.SDKVersion())
+
 	bc, err := mc.GetParamInt(mc.ConfigurationHandle, mc.BoardCountParam)
 	if err != nil {
 		fmt.Println(err)
