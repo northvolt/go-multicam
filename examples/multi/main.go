@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -11,7 +12,18 @@ import (
 	mc "github.com/northvolt/go-multicam"
 )
 
+var (
+	camfilePrimary   = flag.String("camfile-primary", "", "CAM file to use for primary board capture")
+	camfileSecondary = flag.String("camfile-secondary", "", "CAM file to use for secondary board capture")
+)
+
 func main() {
+	flag.Parse()
+	if *camfilePrimary == "" || *camfileSecondary == "" {
+		fmt.Println("camfile-primary and camfile-secondary flags are both required in order to capture")
+		return
+	}
+
 	if err := mc.OpenDriver(); err != nil {
 		fmt.Println(err)
 		return
@@ -34,14 +46,14 @@ func main() {
 	fmt.Println("Boards detected:", bc)
 
 	// Create grabber for each board
-	g2, err := createGrabber(1, "KD6R309MX_L7296SP_SECONDARY.cam")
+	g2, err := createGrabber(1, *camfileSecondary)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	// primary last
-	g1, err := createGrabber(0, "KD6R309MX_L7296SP_SECONDARY.cam")
+	g1, err := createGrabber(0, *camfilePrimary)
 	if err != nil {
 		fmt.Println(err)
 		return

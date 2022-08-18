@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -12,11 +13,19 @@ import (
 )
 
 var (
+	camfile = flag.String("camfile", "", "CAM file to use for capture")
+
 	x, y, pitch int
 	ch          *mc.Channel
 )
 
 func main() {
+	flag.Parse()
+	if *camfile == "" {
+		fmt.Println("camfile flag is required in order to capture")
+		return
+	}
+
 	if err := mc.OpenDriver(); err != nil {
 		fmt.Println(err)
 		return
@@ -84,7 +93,7 @@ func SetupCamera() {
 	}
 
 	// Choose the CAM file
-	if err := ch.SetParamStr(mc.CamFileParam, "KD6R309MX_L7296RG"); err != nil {
+	if err := ch.SetParamStr(mc.CamFileParam, *camfile); err != nil {
 		fmt.Println(err)
 		return
 	}
