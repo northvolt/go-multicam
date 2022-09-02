@@ -24,6 +24,11 @@ func SurfaceForHandle(h Handle) *Surface {
 	return &Surface{h: h}
 }
 
+// Handle returns the Handle for this MultiCam surface object.
+func (s *Surface) Handle() Handle {
+	return s.h
+}
+
 // Create creates a new MultiCam Surface object.
 func (s *Surface) Create() error {
 	if s.h != UninitializedSurface {

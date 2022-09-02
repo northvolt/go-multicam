@@ -24,6 +24,7 @@ const (
 	BoardSerialNumberParam     ParamID = C.MC_SerialNumber
 	BoardTypeParam             ParamID = C.MC_BoardType
 	BufferPitchParam           ParamID = C.MC_BufferPitch
+	BufferSizeParam            ParamID = C.MC_BufferSize
 	CamFileParam               ParamID = C.MC_CamFile
 	ChannelStateParam          ParamID = C.MC_ChannelState
 	ClusterParam               ParamID = C.MC_Cluster
@@ -59,6 +60,7 @@ const (
 )
 
 const (
+	AnySignal                   ParamID = C.MC_SIG_ANY
 	StartAcquisitionSignal      ParamID = C.MC_SIG_START_ACQUISITION_SEQUENCE
 	EndAcquisitionSignal        ParamID = C.MC_SIG_END_ACQUISITION_SEQUENCE
 	AcquisitionFailureSignal    ParamID = C.MC_SIG_ACQUISITION_FAILURE
@@ -69,6 +71,8 @@ const (
 	SurfaceFilledSignal         ParamID = C.MC_SIG_SURFACE_FILLED
 	StartExposureSignal         ParamID = C.MC_SIG_START_EXPOSURE
 	EndExposureSignal           ParamID = C.MC_SIG_END_EXPOSURE
+	UnrecoverableOverrunSignal  ParamID = C.MC_SIG_UNRECOVERABLE_OVERRUN
+	ReleaseSignal               ParamID = C.MC_SIG_RELEASE
 )
 
 const (
@@ -77,7 +81,11 @@ const (
 )
 
 const (
-	SurfaceStateFree int = C.MC_SurfaceState_FREE
+	SurfaceStateFree       int = C.MC_SurfaceState_FREE
+	SurfaceStateFilling        = C.MC_SurfaceState_FILLING
+	SurfaceStateFilled         = C.MC_SurfaceState_FILLED
+	SurfaceStateProcessing     = C.MC_SurfaceState_PROCESSING
+	SurfaceStateReserved       = C.MC_SurfaceState_RESERVED
 )
 
 type ChannelStateID uint32

@@ -1,78 +1,26 @@
 package main
 
+// #include <stdlib.h>
+import "C"
 import (
-	"flag"
 	"fmt"
-	"image"
-	"image/jpeg"
-	"os"
-	"strings"
-	"time"
+	"unsafe"
 
 	mc "github.com/northvolt/go-multicam"
 )
 
 var (
-	camfilePrimary   = flag.String("camfile-primary", "", "CAM file to use for primary board capture")
-	camfileSecondary = flag.String("camfile-secondary", "", "CAM file to use for secondary board capture")
+	bufferSize  int
+	bufferPitch int
+	buffers     []unsafe.Pointer
 )
-
-func main() {
-	flag.Parse()
-	if *camfilePrimary == "" || *camfileSecondary == "" {
-		fmt.Println("camfile-primary and camfile-secondary flags are both required in order to capture")
-		return
-	}
-
-	if err := mc.OpenDriver(); err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer mc.CloseDriver()
-
-	if err := mc.SetParamStr(mc.ConfigurationHandle, mc.ErrorLogParam, "error.log"); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println("Driver was opened...")
-
-	bc, err := mc.GetParamInt(mc.ConfigurationHandle, mc.BoardCountParam)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println("Boards detected:", bc)
-
-	// Create grabber for each board
-	g2, err := createGrabber(1, *camfileSecondary)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// primary last
-	g1, err := createGrabber(0, *camfilePrimary)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	g1.primary = true
-
-	go g2.start()
-	go g1.start()
-
-	for {
-		time.Sleep(time.Second)
-	}
-}
 
 type grabber struct {
 	board       int
 	camfile     string
 	x, y, pitch int
 	ch          *mc.Channel
+	surfaces    []*mc.Surface
 	primary     bool
 }
 
@@ -139,8 +87,80 @@ func (g *grabber) setup() {
 		g.Println("SeqLengthFrParam", err)
 		return
 	}
+}
 
-	g.ch.RegisterCallback(g.cbhandler)
+func (g *grabber) createSurfaces() error {
+	if err := g.ch.SetParamInt(mc.SurfaceCountParam, *numberSurfaces); err != nil {
+		return err
+	}
+
+	for i := 0; i < *numberSurfaces; i++ {
+		s := mc.NewSurface()
+		g.surfaces = append(g.surfaces, s)
+
+		bufferOffset, err := g.ch.GetParamInt(mc.MinBufferPitchParam)
+		if err != nil {
+			g.Println("MinBufferPitchParam", err)
+			return err
+		}
+
+		// bufferOffset *= module->moduleIndex;
+		bufferOffset *= g.board
+
+		// bufferAddress = m_pImageBuffers[i] + bufferOffset;
+		bufferAddress := uintptr(buffers[i]) + uintptr(bufferOffset)
+
+		// McSetParamPtr(surface, MC_SurfaceAddr, bufferAddress);
+		s.SetParamPtr(mc.SurfaceAddrParam, unsafe.Pointer(bufferAddress))
+
+		// McSetParamInt(surface, MC_SurfacePitch, module->bufferPitch);
+		s.SetParamInt(mc.SurfacePitchParam, bufferPitch)
+
+		// McSetParamInt(surface, MC_SurfaceSize, module->bufferSize);
+		s.SetParamInt(mc.SurfaceSizeParam, bufferSize)
+
+		// McSetParamInst(module->channel, MC_Cluster + i, module->surfaces[i]);
+		g.ch.SetParamInst(mc.ClusterParam+mc.ParamID(i), s.Handle())
+	}
+
+	return nil
+}
+
+func (g *grabber) deleteSurfaces() error {
+	for _, v := range g.surfaces {
+		v.Delete()
+	}
+
+	return nil
+}
+
+// Allocate user buffers big enough to contain pixel data from all modules
+func (g *grabber) createBuffers() (err error) {
+	bufferSize, err = g.ch.GetParamInt(mc.BufferSizeParam)
+	if err != nil {
+		return
+	}
+
+	bufferPitch, err = g.ch.GetParamInt(mc.BufferPitchParam)
+	if err != nil {
+		return
+	}
+
+	totalBufferSize := bufferSize + *numberSurfaces*bufferPitch
+
+	for i := 0; i < *numberSurfaces; i++ {
+		buffers = append(buffers, C.malloc(C.ulong(totalBufferSize)))
+	}
+
+	return nil
+}
+
+func (g *grabber) deleteBuffers() error {
+	for i := 0; i < *numberSurfaces; i++ {
+		C.free(buffers[i])
+	}
+
+	return nil
 }
 
 func (g *grabber) start() {
@@ -164,17 +184,11 @@ func (g *grabber) start() {
 		return
 	}
 
-	defer g.stop()
-
 	if g.primary {
 		err := g.ch.SetParamStr(mc.ForceTrigParam, "TRIG")
 		if err != nil {
 			g.Println("ForceTrigParam", err)
 		}
-	}
-
-	for {
-		time.Sleep(time.Second)
 	}
 }
 
@@ -188,50 +202,21 @@ func (g *grabber) stop() {
 	g.ch.Delete()
 }
 
-func (g *grabber) cbhandler(info *mc.CallbackInfo) {
-	switch mc.ParamID(info.Signal) {
+func (g *grabber) handleSignal(info *mc.SignalInfo) *mc.Surface {
+	switch mc.ParamID(info.Signal()) {
 	case mc.SurfaceProcessingSignal:
-		s := mc.SurfaceForHandle(mc.Handle(info.SignalInfo))
-		ptr, err := s.Ptr(g.x, g.y)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		s := mc.SurfaceForHandle((info.SignalInfo()))
 
-		img := image.NewGray(image.Rect(0, 0, g.x, g.y))
-		img.Pix = ptr
+		// set surface to reserved so it is not overwritten
+		s.SetParamInt(mc.SurfaceStateParam, mc.SurfaceStateReserved)
 
-		g.saveImage(img)
+		return s
 	case mc.AcquisitionFailureSignal:
 		fmt.Println("frame error")
 	default:
 		fmt.Println("other error")
 	}
-}
-
-func (g *grabber) saveImage(img *image.Gray) {
-	filename := fmt.Sprintf("%s_%d.jpg", filetime(time.Now()), g.board)
-	f, err := os.Create(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer f.Close()
-
-	opt := jpeg.Options{
-		Quality: 90,
-	}
-	err = jpeg.Encode(f, img, &opt)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-}
-
-func filetime(t time.Time) string {
-	id := t.UTC().Format(time.RFC3339Nano)
-	id = strings.ReplaceAll(id, ":", "-")
-	return id
+	return nil
 }
 
 func (g *grabber) Println(name string, err error) {
