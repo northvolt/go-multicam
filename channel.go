@@ -3,33 +3,38 @@ package multicam
 // #include <multicam.h>
 // #include <stdlib.h>
 /*
-	extern void GoCallbackHandler(MCSIGNALINFO* SignalInfo);
+	extern void GoCallbackHandler(MCCALLBACKINFO* info);
 
-	static void MCCallbackHandler(MCSIGNALINFO* SignalInfo)
+	static void MCCallbackHandler(MCCALLBACKINFO* info)
 	{
-		GoCallbackHandler(SignalInfo);
+		GoCallbackHandler(info);
 	}
 
 	static MCSTATUS SetCallbackHandler(MCHANDLE handle, PVOID context)
 	{
 		return McRegisterCallback(handle, MCCallbackHandler, context);
 	}
+
+	static MCSTATUS WaitSignal(MCHANDLE handle, MCSIGNAL signal, uint timeout, MCSIGNALINFO* info)
+	{
+		return McWaitSignal(handle, signal, timeout, info);
+	}
 */
 import "C"
 
 const UninitializedChannel = 0
 
-type SignalInfo C.MCSIGNALINFO
+type CallbackInfo C.MCCALLBACKINFO
 
-var channelCallbackHandlers map[int]func(*SignalInfo)
+var channelCallbackHandlers map[int]func(*CallbackInfo)
 
 func initChannels() {
-	channelCallbackHandlers = make(map[int]func(*SignalInfo))
+	channelCallbackHandlers = make(map[int]func(*CallbackInfo))
 }
 
 type Channel struct {
 	channel Handle
-	handler func(*SignalInfo)
+	handler func(*CallbackInfo)
 }
 
 // NewChannel creates a new Multicam Channel.
@@ -101,7 +106,7 @@ func (c *Channel) GetParamInst(id ParamID) (Handle, error) {
 
 // RegisterCallback allows setting a callback handler function for this channel.
 // TODO(re): allow setting context data
-func (c *Channel) RegisterCallback(handler func(*SignalInfo)) error {
+func (c *Channel) RegisterCallback(handler func(*CallbackInfo)) error {
 	c.handler = handler
 
 	status := C.SetCallbackHandler(C.uint(c.channel), C.PVOID(nil))
@@ -115,7 +120,7 @@ func (c *Channel) RegisterCallback(handler func(*SignalInfo)) error {
 }
 
 //export GoCallbackHandler
-func GoCallbackHandler(info *SignalInfo) {
+func GoCallbackHandler(info *CallbackInfo) {
 	if len(channelCallbackHandlers) == 0 {
 		return
 	}
@@ -126,4 +131,17 @@ func GoCallbackHandler(info *SignalInfo) {
 	}
 
 	return
+}
+
+// WaitSignal waits until a specific signal for this channel has occurred, or the timeout in ms is reached.
+// On success, a pointer to the SignalInfo for this signal will be returned.
+func (c *Channel) WaitSignal(signal ParamID, timeout int) (*SignalInfo, error) {
+	var info SignalInfo
+
+	status := C.WaitSignal(C.MCHANDLE(c.channel), C.MCSIGNAL(signal), C.uint(timeout), &(info.data))
+	if status != C.MC_OK {
+		return nil, ErrCannotWaitSignal
+	}
+
+	return &info, nil
 }

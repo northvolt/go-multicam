@@ -134,7 +134,7 @@ func SetupCamera() {
 	}
 }
 
-func cbhandler(info *mc.SignalInfo) {
+func cbhandler(info *mc.CallbackInfo) {
 	switch mc.ParamID(info.Signal) {
 	case mc.SurfaceProcessingSignal:
 		s := mc.SurfaceForHandle(mc.Handle(info.SignalInfo))
