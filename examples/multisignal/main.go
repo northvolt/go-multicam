@@ -21,13 +21,10 @@ var (
 	camfilePrimary   = flag.String("camfile-primary", "", "CAM file to use for primary board capture")
 	camfileSecondary = flag.String("camfile-secondary", "", "CAM file to use for secondary board capture")
 	numberSurfaces   = flag.Int("number-surfaces", 10, "number of surfaces for each channel/board. defaults to 10")
+	height           = flag.Int("height", 1000, "frame height. defaults to 1000")
+	width            = flag.Int("width", 7320, "width of single grabber. defaults to 7320")
 
 	saveCh chan pair
-)
-
-const (
-	fullWidth  = 14000
-	fullHeight = 1000
 )
 
 func main() {
@@ -59,19 +56,18 @@ func main() {
 	fmt.Println("Boards detected:", bc)
 
 	// Create grabber for each board
-	g2, err := createGrabber(1, *camfileSecondary)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// primary last
 	g1, err := createGrabber(0, *camfilePrimary)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	g1.primary = true
+
+	g2, err := createGrabber(1, *camfileSecondary)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	saveCh = make(chan pair, *numberSurfaces)
 
@@ -86,10 +82,14 @@ func main() {
 
 	go func() {
 		g2.start()
-		g1.start()
-
-		defer g1.stop()
 		defer g2.stop()
+
+		g1.start()
+		defer g1.stop()
+
+		defer func() {
+			close(saveCh)
+		}()
 
 		for {
 			sig1info, err := g1.ch.WaitSignal(mc.AnySignal, 1000)
@@ -97,35 +97,44 @@ func main() {
 				g1.Println("WaitSignal", err)
 				return
 			}
-			surface1 := g1.handleSignal(sig1info)
+			surface1, err := g1.handleSignal(sig1info)
+			if err != nil {
+				fmt.Println("surface1 handleSignal", err)
+				return
+			}
 
 			sig2info, err := g2.ch.WaitSignal(mc.AnySignal, 1000)
 			if err != nil {
 				g2.Println("WaitSignal", err)
 				return
 			}
-			surface2 := g2.handleSignal(sig2info)
+			surface2, err := g2.handleSignal(sig2info)
+			if surface2 == nil {
+				fmt.Println("surface2 handleSignal", err)
+				return
+			}
 
 			saveCh <- pair{s1: surface1, s2: surface2}
 		}
 	}()
 
 	go func() {
+		img := image.NewGray(image.Rect(0, 0, *width*2, *height))
+
 		for p := range saveCh {
-			ptr, err := p.s1.Ptr(fullWidth, fullHeight)
+			ptr, err := p.s1.Ptr(*width*2, *height)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("saveCh", err)
 				return
 			}
 
-			img := image.NewGray(image.Rect(0, 0, fullWidth, fullHeight))
-			img.Pix = ptr
+			copy(img.Pix, ptr)
 
-			saveImage(img)
-
-			// free the surfaces when finished
+			// free the surfaces while we save the JPG data for concurrency
 			p.s1.SetParamInt(mc.SurfaceStateParam, mc.SurfaceStateFree)
 			p.s2.SetParamInt(mc.SurfaceStateParam, mc.SurfaceStateFree)
+
+			saveImage(img)
 		}
 	}()
 

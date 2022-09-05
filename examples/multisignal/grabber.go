@@ -3,6 +3,7 @@ package main
 // #include <stdlib.h>
 import "C"
 import (
+	"errors"
 	"fmt"
 	"unsafe"
 
@@ -74,8 +75,15 @@ func (g *grabber) setup() {
 		return
 	}
 
-	g.pitch, err = g.ch.GetParamInt(mc.BufferPitchParam)
+	// get the normal pitch of a single grabber
+	g.pitch, err = g.ch.GetParamInt(mc.MinBufferPitchParam)
 	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// and now set the pitch to the normal pitch multiplied by the number of grabbers
+	if err := g.ch.SetParamInt(mc.BufferPitchParam, 2*g.pitch); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -94,32 +102,34 @@ func (g *grabber) createSurfaces() error {
 		return err
 	}
 
+	bufferOffset, err := g.ch.GetParamInt(mc.MinBufferPitchParam)
+	if err != nil {
+		g.Println("MinBufferPitchParam", err)
+		return err
+	}
+
+	// offset into the buffer based on the current board
+	bufferOffset *= g.board
+
 	for i := 0; i < *numberSurfaces; i++ {
 		s := mc.NewSurface()
-		g.surfaces = append(g.surfaces, s)
-
-		bufferOffset, err := g.ch.GetParamInt(mc.MinBufferPitchParam)
-		if err != nil {
-			g.Println("MinBufferPitchParam", err)
+		if err := s.Create(); err != nil {
 			return err
 		}
 
-		// bufferOffset *= module->moduleIndex;
-		bufferOffset *= g.board
+		g.surfaces = append(g.surfaces, s)
 
-		// bufferAddress = m_pImageBuffers[i] + bufferOffset;
+		// the address in the buffer to write the data for this surface
 		bufferAddress := uintptr(buffers[i]) + uintptr(bufferOffset)
-
-		// McSetParamPtr(surface, MC_SurfaceAddr, bufferAddress);
 		s.SetParamPtr(mc.SurfaceAddrParam, unsafe.Pointer(bufferAddress))
 
-		// McSetParamInt(surface, MC_SurfacePitch, module->bufferPitch);
+		// the pitch into the buffer for this surface
 		s.SetParamInt(mc.SurfacePitchParam, bufferPitch)
 
-		// McSetParamInt(surface, MC_SurfaceSize, module->bufferSize);
+		// buffer size for this surface
 		s.SetParamInt(mc.SurfaceSizeParam, bufferSize)
 
-		// McSetParamInst(module->channel, MC_Cluster + i, module->surfaces[i]);
+		// add this surface to the cluster of surfaces for the channel
 		g.ch.SetParamInst(mc.ClusterParam+mc.ParamID(i), s.Handle())
 	}
 
@@ -128,6 +138,7 @@ func (g *grabber) createSurfaces() error {
 
 func (g *grabber) deleteSurfaces() error {
 	for _, v := range g.surfaces {
+		v.SetParamInt(mc.SurfaceStateParam, mc.SurfaceStateFree)
 		v.Delete()
 	}
 
@@ -146,7 +157,7 @@ func (g *grabber) createBuffers() (err error) {
 		return
 	}
 
-	totalBufferSize := bufferSize + *numberSurfaces*bufferPitch
+	totalBufferSize := bufferSize + bufferPitch // big enough for 2 grabbers
 
 	for i := 0; i < *numberSurfaces; i++ {
 		buffers = append(buffers, C.malloc(C.ulong(totalBufferSize)))
@@ -178,6 +189,11 @@ func (g *grabber) start() {
 		return
 	}
 
+	if err := g.ch.SetParamInt(mc.SurfaceIndexParam, 0); err != nil {
+		g.Println("SurfaceIndexParam", err)
+		return
+	}
+
 	// Start Acquisitions for this channel.
 	if err := g.ch.SetParamInt(mc.ChannelStateParam, int(mc.ChannelStateActive)); err != nil {
 		g.Println("ChannelStateParam", err)
@@ -202,7 +218,7 @@ func (g *grabber) stop() {
 	g.ch.Delete()
 }
 
-func (g *grabber) handleSignal(info *mc.SignalInfo) *mc.Surface {
+func (g *grabber) handleSignal(info *mc.SignalInfo) (*mc.Surface, error) {
 	switch mc.ParamID(info.Signal()) {
 	case mc.SurfaceProcessingSignal:
 		s := mc.SurfaceForHandle((info.SignalInfo()))
@@ -210,13 +226,14 @@ func (g *grabber) handleSignal(info *mc.SignalInfo) *mc.Surface {
 		// set surface to reserved so it is not overwritten
 		s.SetParamInt(mc.SurfaceStateParam, mc.SurfaceStateReserved)
 
-		return s
+		return s, nil
 	case mc.AcquisitionFailureSignal:
 		fmt.Println("frame error")
+		return nil, errors.New("acquisition failure signal")
 	default:
 		fmt.Println("other error")
+		return nil, fmt.Errorf("other error signal: %d", info.Signal())
 	}
-	return nil
 }
 
 func (g *grabber) Println(name string, err error) {
