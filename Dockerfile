@@ -28,6 +28,11 @@ ARG EXAMPLE=basic
 
 COPY . /src/github.com/northvolt/go-multicam
 WORKDIR /src/github.com/northvolt/go-multicam
-RUN go build -o /mcexample ./examples/${EXAMPLE}/
+RUN go build -o /basic ./examples/basic/ && \
+    go build -o /blink ./examples/blink/ && \
+    go build -o /capture ./examples/capture/ && \
+    go build  -o /metadata ./examples/metadata/ && \
+    go build -o /multi ./examples/multi/ && \
+    go build  -o /multisignal ./examples/multisignal/ 
 
-ENTRYPOINT ["/mcexample"]
+ENTRYPOINT ["${EXAMPLE}"]
