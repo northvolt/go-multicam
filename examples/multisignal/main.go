@@ -20,6 +20,8 @@ type pair struct {
 var (
 	camfilePrimary   = flag.String("camfile-primary", "", "CAM file to use for primary board capture")
 	camfileSecondary = flag.String("camfile-secondary", "", "CAM file to use for secondary board capture")
+	primary          = flag.Int("primary", 0, "board number to use as primary for capture (default 0)")
+	secondary        = flag.Int("secondary", 1, "board number to use as secondary for capture (default 1)")
 	numberSurfaces   = flag.Int("number-surfaces", 10, "number of surfaces for each channel/board. defaults to 10")
 	height           = flag.Int("height", 1000, "frame height. defaults to 1000")
 	width            = flag.Int("width", 7320, "width of single grabber. defaults to 7320")
@@ -56,14 +58,14 @@ func main() {
 	fmt.Println("Boards detected:", bc)
 
 	// Create grabber for each board
-	g1, err := createGrabber(0, *camfilePrimary)
+	g1, err := createGrabber(*primary, *camfilePrimary)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	g1.primary = true
 
-	g2, err := createGrabber(1, *camfileSecondary)
+	g2, err := createGrabber(*secondary, *camfileSecondary)
 	if err != nil {
 		fmt.Println(err)
 		return

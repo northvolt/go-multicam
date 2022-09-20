@@ -15,6 +15,8 @@ import (
 var (
 	camfilePrimary   = flag.String("camfile-primary", "", "CAM file to use for primary board capture")
 	camfileSecondary = flag.String("camfile-secondary", "", "CAM file to use for secondary board capture")
+	primary          = flag.Int("primary", 0, "board number to use as primary for capture (default 0)")
+	secondary        = flag.Int("secondary", 1, "board number to use as secondary for capture (default 1)")
 )
 
 func main() {
@@ -46,14 +48,14 @@ func main() {
 	fmt.Println("Boards detected:", bc)
 
 	// Create grabber for each board
-	g2, err := createGrabber(1, *camfileSecondary)
+	g2, err := createGrabber(*secondary, *camfileSecondary)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	// primary last
-	g1, err := createGrabber(0, *camfilePrimary)
+	g1, err := createGrabber(*primary, *camfilePrimary)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -10,6 +10,7 @@ import (
 
 var (
 	camfile = flag.String("camfile", "", "CAM file to use for capture")
+	board   = flag.Int("board", 0, "board number to use for capture (default 0)")
 
 	x, y, pitch, content int
 	ch                   *mc.Channel
@@ -36,7 +37,7 @@ func main() {
 	fmt.Println("Driver was opened...")
 
 	// Get board
-	brd := mc.BoardForIndex(1)
+	brd := mc.BoardForIndex(*board)
 
 	//  Create a channel for board.
 	var err error
