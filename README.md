@@ -98,6 +98,12 @@ FULL_XR_929
 Done.
 ```
 
+You can copy the compiled binary executables out of the container, and run them directly on host computers that are running Linux and have the correct Euresys drivers installed.
+
+```
+mkdir -p ./build
+docker run -it -v $(pwd)/build:/hostbuild -t multicam:latest /bin/bash -c "cp /build/* /hostbuild/"
+```
 
 ## Why it exists
 
