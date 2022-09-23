@@ -36,4 +36,4 @@ RUN mkdir -p /build && \
     go build -o /build/multi ./examples/multi/ && \
     go build  -o /build/multisignal ./examples/multisignal/
 
-ENTRYPOINT ["/build/${EXAMPLE}"]
+CMD ["/build/${EXAMPLE}"]
