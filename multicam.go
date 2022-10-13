@@ -32,11 +32,14 @@ const (
 	ConnectorParam             ParamID = C.MC_Connector
 	DriverIndexParam           ParamID = C.MC_DriverIndex
 	ElapsedPgParam             ParamID = C.MC_Elapsed_Pg
+	EncoderPitchParam          ParamID = C.MC_EncoderPitch
 	ErrorHandlingParam         ParamID = C.MC_ErrorHandling
 	ErrorLogParam              ParamID = C.MC_ErrorLog
 	ForceTrigParam             ParamID = C.MC_ForceTrig
 	ImageSizeXParam            ParamID = C.MC_ImageSizeX
 	ImageSizeYParam            ParamID = C.MC_ImageSizeY
+	LinePitchParam             ParamID = C.MC_LinePitch
+	LineRateModeParam          ParamID = C.MC_LineRateMode
 	MetadataContentParam       ParamID = C.MC_MetadataContent
 	MetadataGPPCInputLineParam ParamID = C.MC_MetadataGPPCInputLine
 	MetadataGPPCLocationParam  ParamID = C.MC_MetadataGPPCLocation
@@ -46,6 +49,7 @@ const (
 	MinBufferPitchParam        ParamID = C.MC_MinBufferPitch
 	OutputConfigParam          ParamID = C.MC_OutputConfig
 	OutputStateParam           ParamID = C.MC_OutputState
+	PeriodUsParam              ParamID = C.MC_Period_us
 	SerialNumberParam          ParamID = C.MC_SerialNumber
 	SeqLengthFrParam           ParamID = C.MC_SeqLength_Fr
 	SeqLengthPgParam           ParamID = C.MC_SeqLength_Pg
@@ -148,6 +152,13 @@ const (
 	MetadataLocationLeftBoarder = C.MC_MetadataLocation_LEFT_BOARDER
 	MetadataLocationTap10       = C.MC_MetadataLocation_TAP10
 	MetadataLocationLVALRISE    = C.MC_MetadataLocation_LVALRISE
+)
+
+const (
+	LineRateModeCamera  = C.MC_LineRateMode_CAMERA
+	LineRateModePeriod  = C.MC_LineRateMode_PERIOD
+	LineRateModePulse   = C.MC_LineRateMode_PULSE
+	LineRateModeConvert = C.MC_LineRateMode_CONVERT
 )
 
 // OpenDriver starts up the Multicam drivers.
