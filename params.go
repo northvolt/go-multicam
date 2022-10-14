@@ -3,7 +3,10 @@ package multicam
 // #include <multicam.h>
 // #include <stdlib.h>
 import "C"
-import "unsafe"
+import (
+	"fmt"
+	"unsafe"
+)
 
 const maxlength = 32
 
@@ -14,7 +17,7 @@ func SetParamStr(handle Handle, id ParamID, val string) error {
 
 	status := C.McSetParamStr(C.MCHANDLE(handle), C.MCPARAMID(id), cval)
 	if status != C.MC_OK {
-		return ErrCannotSetParam
+		return fmt.Errorf("%s: %w", id.String(), ErrCannotSetParam)
 	}
 
 	return nil
@@ -28,7 +31,7 @@ func GetParamStr(handle Handle, id ParamID) (string, error) {
 
 	status := C.McGetParamStr(C.MCHANDLE(handle), C.MCPARAMID(id), val, maxlength)
 	if status != C.MC_OK {
-		return "", ErrCannotGetParam
+		return "", fmt.Errorf("%s: %w", id.String(), ErrCannotGetParam)
 	}
 
 	return C.GoString(val), nil
@@ -38,7 +41,7 @@ func GetParamStr(handle Handle, id ParamID) (string, error) {
 func SetParamInt(handle Handle, id ParamID, val int) error {
 	status := C.McSetParamInt(C.MCHANDLE(handle), C.MCPARAMID(id), C.int(val))
 	if status != C.MC_OK {
-		return ErrCannotSetParam
+		return fmt.Errorf("%s: %w", id.String(), ErrCannotSetParam)
 	}
 
 	return nil
@@ -50,7 +53,7 @@ func GetParamInt(handle Handle, id ParamID) (int, error) {
 
 	status := C.McGetParamInt(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
 	if status != C.MC_OK {
-		return 0, ErrCannotGetParam
+		return 0, fmt.Errorf("%s: %w", id.String(), ErrCannotGetParam)
 	}
 
 	return int(val), nil
@@ -60,7 +63,7 @@ func GetParamInt(handle Handle, id ParamID) (int, error) {
 func SetParamPtr(handle Handle, id ParamID, val unsafe.Pointer) error {
 	status := C.McSetParamPtr(C.MCHANDLE(handle), C.MCPARAMID(id), C.PVOID(val))
 	if status != C.MC_OK {
-		return ErrCannotSetParam
+		return fmt.Errorf("%s: %w", id.String(), ErrCannotSetParam)
 	}
 
 	return nil
@@ -72,7 +75,7 @@ func GetParamPtr(handle Handle, id ParamID) (unsafe.Pointer, error) {
 
 	status := C.McGetParamPtr(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
 	if status != C.MC_OK {
-		return nil, ErrCannotGetParam
+		return nil, fmt.Errorf("%s: %w", id.String(), ErrCannotGetParam)
 	}
 
 	return unsafe.Pointer(val), nil
@@ -82,7 +85,7 @@ func GetParamPtr(handle Handle, id ParamID) (unsafe.Pointer, error) {
 func SetParamInst(handle Handle, id ParamID, val Handle) error {
 	status := C.McSetParamInst(C.MCHANDLE(handle), C.MCPARAMID(id), C.MCHANDLE(val))
 	if status != C.MC_OK {
-		return ErrCannotSetParam
+		return fmt.Errorf("%s: %w", id.String(), ErrCannotSetParam)
 	}
 
 	return nil
@@ -94,7 +97,7 @@ func GetParamInst(handle Handle, id ParamID) (Handle, error) {
 
 	status := C.McGetParamInst(C.MCHANDLE(handle), C.MCPARAMID(id), &val)
 	if status != C.MC_OK {
-		return 0, ErrCannotGetParam
+		return 0, fmt.Errorf("%s: %w", id.String(), ErrCannotGetParam)
 	}
 
 	return Handle(val), nil
