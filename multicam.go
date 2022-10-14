@@ -11,6 +11,7 @@ const (
 	DefaultBoardHandle   Handle = C.MC_BOARD
 )
 
+//go:generate stringer -type ParamID
 type ParamID uint32
 
 const (
