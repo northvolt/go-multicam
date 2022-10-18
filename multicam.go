@@ -2,6 +2,40 @@ package multicam
 
 // #include <multicam.h>
 import "C"
+import "fmt"
+
+//go:generate stringer -type StatusCode
+type StatusCode int32
+
+const (
+	StatusOK                      StatusCode = C.MC_OK
+	StatusNoBoardFound            StatusCode = C.MC_NO_BOARD_FOUND
+	StatusBadParameter            StatusCode = C.MC_BAD_PARAMETER
+	StatusIOError                 StatusCode = C.MC_IO_ERROR
+	StatusInternalError           StatusCode = C.MC_INTERNAL_ERROR
+	StatusNoMoreResources         StatusCode = C.MC_NO_MORE_RESOURCES
+	StatusInUse                   StatusCode = C.MC_IN_USE
+	StatusNotSupported            StatusCode = C.MC_NOT_SUPPORTED
+	StatusDatabaseError           StatusCode = C.MC_DATABASE_ERROR
+	StatusOutOfBound              StatusCode = C.MC_OUT_OF_BOUND
+	StatusInstanceNotFound        StatusCode = C.MC_INSTANCE_NOT_FOUND
+	StatusInvalidHandle           StatusCode = C.MC_INVALID_HANDLE
+	StatusTimeout                 StatusCode = C.MC_TIMEOUT
+	StatusInvalidValue            StatusCode = C.MC_INVALID_VALUE
+	StatusRangeError              StatusCode = C.MC_RANGE_ERROR
+	StatusBadHWConfig             StatusCode = C.MC_BAD_HW_CONFIG
+	StatusNoEvent                 StatusCode = C.MC_NO_EVENT
+	StatusLicenseNotGranted       StatusCode = C.MC_LICENSE_NOT_GRANTED
+	StatusFatalError              StatusCode = C.MC_FATAL_ERROR
+	StatusHWEventConflict         StatusCode = C.MC_HW_EVENT_CONFLICT
+	StatusFileNotFound            StatusCode = C.MC_FILE_NOT_FOUND
+	StatusOverflow                StatusCode = C.MC_OVERFLOW
+	StatusInvalidParameterSetting StatusCode = C.MC_INVALID_PARAMETER_SETTING
+	StatusParameterIllegalAccess  StatusCode = C.MC_PARAMETER_ILLEGAL_ACCESS
+	StatusClusterBusy             StatusCode = C.MC_CLUSTER_BUSY
+	StatusServiceError            StatusCode = C.MC_SERVICE_ERROR
+	StatusInvalidSurface          StatusCode = C.MC_INVALID_SURFACE
+)
 
 type Handle uint32
 
@@ -164,9 +198,9 @@ const (
 
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {
-	status := C.McOpenDriver(nil)
-	if status != C.MC_OK {
-		return ErrCannotOpenDriver
+	status := StatusCode(C.McOpenDriver(nil))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotOpenDriver)
 	}
 
 	initChannels()

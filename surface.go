@@ -4,6 +4,7 @@ package multicam
 // #include <stdlib.h>
 import "C"
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 )
@@ -37,9 +38,9 @@ func (s *Surface) Create() error {
 
 	var h C.uint
 
-	status := C.McCreate(C.MC_DEFAULT_SURFACE_HANDLE, &h)
-	if status != C.MC_OK {
-		return ErrCannotCreateSurface
+	status := StatusCode(C.McCreate(C.MC_DEFAULT_SURFACE_HANDLE, &h))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotCreateSurface)
 	}
 
 	s.h = Handle(h)
@@ -53,9 +54,9 @@ func (s *Surface) Delete() error {
 		return ErrInvalidSurface
 	}
 
-	status := C.McDelete(C.uint(s.h))
-	if status != C.MC_OK {
-		return ErrCannotDeleteSurface
+	status := StatusCode(C.McDelete(C.uint(s.h)))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotDeleteSurface)
 	}
 
 	return nil

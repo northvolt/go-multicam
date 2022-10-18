@@ -21,6 +21,7 @@ package multicam
 	}
 */
 import "C"
+import "fmt"
 
 const UninitializedChannel = 0
 
@@ -50,9 +51,9 @@ func (c *Channel) Create() error {
 
 	var ch C.uint
 
-	status := C.McCreate(C.MC_CHANNEL, &ch)
-	if status != C.MC_OK {
-		return ErrCannotCreateChannel
+	status := StatusCode(C.McCreate(C.MC_CHANNEL, &ch))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotCreateChannel)
 	}
 
 	c.channel = Handle(ch)
@@ -66,9 +67,9 @@ func (c *Channel) Delete() error {
 		return ErrInvalidChannel
 	}
 
-	status := C.McDelete(C.uint(c.channel))
-	if status != C.MC_OK {
-		return ErrCannotDeleteChannel
+	status := StatusCode(C.McDelete(C.uint(c.channel)))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotDeleteChannel)
 	}
 
 	return nil
@@ -109,9 +110,9 @@ func (c *Channel) GetParamInst(id ParamID) (Handle, error) {
 func (c *Channel) RegisterCallback(handler func(*CallbackInfo)) error {
 	c.handler = handler
 
-	status := C.SetCallbackHandler(C.uint(c.channel), C.PVOID(nil))
-	if status != C.MC_OK {
-		return ErrCannotRegisterCallback
+	status := StatusCode(C.SetCallbackHandler(C.uint(c.channel), C.PVOID(nil)))
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotRegisterCallback)
 	}
 
 	channelCallbackHandlers[int(c.channel)] = handler
@@ -138,9 +139,9 @@ func GoCallbackHandler(info *CallbackInfo) {
 func (c *Channel) WaitSignal(signal ParamID, timeout int) (*SignalInfo, error) {
 	var info SignalInfo
 
-	status := C.WaitSignal(C.MCHANDLE(c.channel), C.MCSIGNAL(signal), C.uint(timeout), &(info.data))
-	if status != C.MC_OK {
-		return nil, ErrCannotWaitSignal
+	status := StatusCode(C.WaitSignal(C.MCHANDLE(c.channel), C.MCSIGNAL(signal), C.uint(timeout), &(info.data)))
+	if status != StatusOK {
+		return nil, fmt.Errorf("%s: %w", status.String(), ErrCannotWaitSignal)
 	}
 
 	return &info, nil
