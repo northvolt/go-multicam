@@ -4,7 +4,7 @@ import "os"
 
 // GoMulticamVersion of this package, for display purposes.
 // Change this variable on a new package release.
-const GoMulticamVersion = "0.3.0"
+const GoMulticamVersion = "0.4.0"
 
 // Version returns the current Golang package version.
 func Version() string {
