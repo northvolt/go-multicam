@@ -105,6 +105,14 @@ mkdir -p ./build
 docker run -it -v $(pwd)/build:/hostbuild -t multicam:latest /bin/bash -c "cp /build/* /hostbuild/"
 ```
 
+## Updating generated files
+
+You can update the files out of the container so that you can update based on changes to params or status codes.
+
+```
+docker run -it -v $(pwd):/hostsrc -t multicam:latest /bin/bash -c "cp /src/github.com/northvolt/go-multicam/*_string.go /hostsrc/"
+```
+
 ## Why it exists
 
 Computer vision applications written in Go can easily take advantage of multi-core concurrency while also having access to packages such as GoCV (https://gocv.io). The `go-multicam` package now makes is possible for Go programs to connect to Euresys cameras and line scanners that are commonly used for industrial applications.

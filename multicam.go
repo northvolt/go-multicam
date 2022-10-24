@@ -4,7 +4,7 @@ package multicam
 import "C"
 import "fmt"
 
-//go:generate stringer -type StatusCode
+//go:generate go run golang.org/x/tools/cmd/stringer -type StatusCode
 type StatusCode int32
 
 const (
@@ -45,7 +45,7 @@ const (
 	DefaultBoardHandle   Handle = C.MC_BOARD
 )
 
-//go:generate stringer -type ParamID
+//go:generate go run golang.org/x/tools/cmd/stringer -type ParamID
 type ParamID uint32
 
 const (
