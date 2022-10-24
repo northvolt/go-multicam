@@ -28,6 +28,7 @@ ARG EXAMPLE=basic
 
 COPY . /src/github.com/northvolt/go-multicam
 WORKDIR /src/github.com/northvolt/go-multicam
+RUN go get golang.org/x/tools/cmd/stringer && go generate .
 RUN mkdir -p /build && \
     go build -o /build/basic ./examples/basic/ && \
     go build -o /build/blink ./examples/blink/ && \
