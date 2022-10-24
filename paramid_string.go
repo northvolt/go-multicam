@@ -30,6 +30,7 @@ func _() {
 	_ = x[ErrorHandlingParam-802816]
 	_ = x[ErrorLogParam-1327104]
 	_ = x[ForceTrigParam-819200]
+	_ = x[ImageFlipXParam-21954560]
 	_ = x[ImageSizeXParam-8568832]
 	_ = x[ImageSizeYParam-8585216]
 	_ = x[LinePitchParam-9748480]
@@ -70,7 +71,7 @@ func _() {
 	_ = x[ReleaseSignal-9]
 }
 
-const _ParamID_name = "DriverIndexParamSurfaceProcessingSignalSurfaceFilledSignalUnrecoverableOverrunSignalFrameTriggerViolationSignalStartExposureSignalEndExposureSignalAcquisitionFailureSignalClusterUnavailableSignalReleaseSignalEndAcquisitionSignalStartAcquisitionSignalEndChannelActivitySignalBoardPCIPositionParamBoardNameParamBoardIdentifierParamBoardNameChangeParamBoardSerialNumberParamBoardTypeParamCamFileParamClusterParamChannelStateParamSurfaceIndexParamSignalEnableParamSurfaceSizeParamSurfaceAddrParamSurfacePitchParamSurfaceStateParamErrorHandlingParamForceTrigParamBoardCountParamErrorLogParamSurfaceCountParamImageSizeXParamImageSizeYParamEncoderPitchParamLinePitchParamConnectorParamLineRateModeParamPeriodUsParamOutputConfigParamOutputStateParamBoardIndexParamColorFormatParamBufferSizeParamMinBufferPitchParamBufferPitchParamAcquisitionModeParamSeqLengthLnParamSeqLengthFrParamSeqLengthPgParamElapsedPgParamMetadataInsertionParamMetadataContentParamMetadataLocationParamMetadataGPPCInputLineParamMetadataGPPCLocationParamMetadataGPPCResetLineParam"
+const _ParamID_name = "DriverIndexParamSurfaceProcessingSignalSurfaceFilledSignalUnrecoverableOverrunSignalFrameTriggerViolationSignalStartExposureSignalEndExposureSignalAcquisitionFailureSignalClusterUnavailableSignalReleaseSignalEndAcquisitionSignalStartAcquisitionSignalEndChannelActivitySignalBoardPCIPositionParamBoardNameParamBoardIdentifierParamBoardNameChangeParamBoardSerialNumberParamBoardTypeParamCamFileParamClusterParamChannelStateParamSurfaceIndexParamSignalEnableParamSurfaceSizeParamSurfaceAddrParamSurfacePitchParamSurfaceStateParamErrorHandlingParamForceTrigParamBoardCountParamErrorLogParamSurfaceCountParamImageSizeXParamImageSizeYParamEncoderPitchParamLinePitchParamConnectorParamLineRateModeParamPeriodUsParamImageFlipXParamOutputConfigParamOutputStateParamBoardIndexParamColorFormatParamBufferSizeParamMinBufferPitchParamBufferPitchParamAcquisitionModeParamSeqLengthLnParamSeqLengthFrParamSeqLengthPgParamElapsedPgParamMetadataInsertionParamMetadataContentParamMetadataLocationParamMetadataGPPCInputLineParamMetadataGPPCLocationParamMetadataGPPCResetLineParam"
 
 var _ParamID_map = map[ParamID]string{
 	0:         _ParamID_name[0:16],
@@ -113,24 +114,25 @@ var _ParamID_map = map[ParamID]string{
 	11173888:  _ParamID_name[664:678],
 	21757952:  _ParamID_name[678:695],
 	21774336:  _ParamID_name[695:708],
-	28508160:  _ParamID_name[708:725],
-	28540928:  _ParamID_name[725:741],
-	32358400:  _ParamID_name[741:756],
-	36438016:  _ParamID_name[756:772],
-	54607872:  _ParamID_name[772:787],
-	54640640:  _ParamID_name[787:806],
-	54657024:  _ParamID_name[806:822],
-	55640064:  _ParamID_name[822:842],
-	55721984:  _ParamID_name[842:858],
-	55820288:  _ParamID_name[858:874],
-	55836672:  _ParamID_name[874:890],
-	56606720:  _ParamID_name[890:904],
-	177635328: _ParamID_name[904:926],
-	177750016: _ParamID_name[926:946],
-	181125120: _ParamID_name[946:967],
-	183681024: _ParamID_name[967:993],
-	183713792: _ParamID_name[993:1018],
-	183730176: _ParamID_name[1018:1044],
+	21954560:  _ParamID_name[708:723],
+	28508160:  _ParamID_name[723:740],
+	28540928:  _ParamID_name[740:756],
+	32358400:  _ParamID_name[756:771],
+	36438016:  _ParamID_name[771:787],
+	54607872:  _ParamID_name[787:802],
+	54640640:  _ParamID_name[802:821],
+	54657024:  _ParamID_name[821:837],
+	55640064:  _ParamID_name[837:857],
+	55721984:  _ParamID_name[857:873],
+	55820288:  _ParamID_name[873:889],
+	55836672:  _ParamID_name[889:905],
+	56606720:  _ParamID_name[905:919],
+	177635328: _ParamID_name[919:941],
+	177750016: _ParamID_name[941:961],
+	181125120: _ParamID_name[961:982],
+	183681024: _ParamID_name[982:1008],
+	183713792: _ParamID_name[1008:1033],
+	183730176: _ParamID_name[1033:1059],
 }
 
 func (i ParamID) String() string {
