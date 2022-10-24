@@ -71,6 +71,7 @@ const (
 	ErrorHandlingParam         ParamID = C.MC_ErrorHandling
 	ErrorLogParam              ParamID = C.MC_ErrorLog
 	ForceTrigParam             ParamID = C.MC_ForceTrig
+	ImageFlipXParam            ParamID = C.MC_ImageFlipX
 	ImageSizeXParam            ParamID = C.MC_ImageSizeX
 	ImageSizeYParam            ParamID = C.MC_ImageSizeY
 	LinePitchParam             ParamID = C.MC_LinePitch
