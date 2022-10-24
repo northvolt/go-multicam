@@ -197,6 +197,11 @@ const (
 	LineRateModeConvert = C.MC_LineRateMode_CONVERT
 )
 
+const (
+	ImageFlipXOff = C.MC_ImageFlipX_OFF
+	ImageFlipXOn  = C.MC_ImageFlipX_ON
+)
+
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {
 	status := StatusCode(C.McOpenDriver(nil))
