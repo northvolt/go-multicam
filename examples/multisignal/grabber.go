@@ -23,6 +23,7 @@ type grabber struct {
 	ch          *mc.Channel
 	surfaces    []*mc.Surface
 	primary     bool
+	flip        bool
 }
 
 func createGrabber(board int, camfile string) (*grabber, error) {
@@ -36,28 +37,39 @@ func createGrabber(board int, camfile string) (*grabber, error) {
 		return nil, err
 	}
 
-	g.setup()
-
 	return &g, nil
 }
 
-func (g *grabber) setup() {
+func (g *grabber) setup() error {
 	// For all GrabLink boards but Grablink DualBase
 	if err := g.ch.SetParamStr(mc.ConnectorParam, "M"); err != nil {
 		g.Println("ConnectorParam", err)
-		return
+		return err
 	}
 
 	// Choose the CAM file
 	if err := g.ch.SetParamStr(mc.CamFileParam, g.camfile); err != nil {
 		g.Println("CamFileParam", err)
-		return
+		return err
 	}
 
 	// Set the color format.
 	if err := g.ch.SetParamInt(mc.ColorFormatParam, mc.ColorFormatY8); err != nil {
 		g.Println("ColorFormatParam", err)
-		return
+		return err
+	}
+
+	// flip on x axis?
+	if g.flip {
+		if err := g.ch.SetParamInt(mc.ImageFlipXParam, mc.ImageFlipXOn); err != nil {
+			g.Println("ImageFlipXParam", err)
+			return err
+		}
+	}
+
+	if err := g.ch.SetParamInt(mc.ColorFormatParam, mc.ColorFormatY8); err != nil {
+		g.Println("ColorFormatParam", err)
+		return err
 	}
 
 	var err error
@@ -66,26 +78,26 @@ func (g *grabber) setup() {
 	g.x, err = g.ch.GetParamInt(mc.ImageSizeXParam)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	g.y, err = g.ch.GetParamInt(mc.ImageSizeYParam)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	// get the normal pitch of a single grabber
 	g.pitch, err = g.ch.GetParamInt(mc.MinBufferPitchParam)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	// and now set the pitch to the normal pitch multiplied by the number of grabbers
 	if err := g.ch.SetParamInt(mc.BufferPitchParam, 2*g.pitch); err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	fmt.Println("x:", g.x, "y:", g.y, "pitch:", g.pitch)
@@ -93,8 +105,10 @@ func (g *grabber) setup() {
 	// The number of images to acquire.
 	if err := g.ch.SetParamInt(mc.SeqLengthFrParam, mc.IndeterminateLength); err != nil {
 		g.Println("SeqLengthFrParam", err)
-		return
+		return err
 	}
+
+	return nil
 }
 
 func (g *grabber) createSurfaces() error {
@@ -109,7 +123,7 @@ func (g *grabber) createSurfaces() error {
 	}
 
 	// offset into the buffer based on the current board
-	bufferOffset *= g.board
+	bufferOffset *= g.bufferOffsetMultiplier()
 
 	for i := 0; i < *numberSurfaces; i++ {
 		s := mc.NewSurface()
@@ -238,4 +252,16 @@ func (g *grabber) handleSignal(info *mc.SignalInfo) (*mc.Surface, error) {
 
 func (g *grabber) Println(name string, err error) {
 	fmt.Println(g.board, name, err)
+}
+
+func (g *grabber) bufferOffsetMultiplier() int {
+	if g.flip {
+		switch g.board {
+		case 0:
+			return 1
+		case 1:
+			return 0
+		}
+	}
+	return g.board
 }
