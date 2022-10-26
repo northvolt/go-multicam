@@ -33,7 +33,7 @@ func ParseMetadata(content int, data []byte) (*Metadata, error) {
 		return &Metadata{
 			content: content,
 			ioState: data[0],
-			count:   binary.LittleEndian.Uint32(data[2:])}, nil
+			count:   binary.LittleEndian.Uint32(data[2:6])}, nil
 
 	case MetadataContentThreeField:
 		if len(data) < 10 {
@@ -43,8 +43,47 @@ func ParseMetadata(content int, data []byte) (*Metadata, error) {
 		return &Metadata{
 			content: content,
 			ioState: data[0],
-			qcount:  binary.LittleEndian.Uint32(data[2:]),
-			count:   binary.LittleEndian.Uint32(data[6:])}, nil
+			qcount:  binary.LittleEndian.Uint32(data[2:6]),
+			count:   binary.LittleEndian.Uint32(data[6:10])}, nil
+
+	default:
+		return nil, errors.New("invalid metadata field count")
+	}
+}
+
+// ParseMetadataFlipped returns the metadata for a given image frame that has been flipped on the X axis,
+// for the expected metadata type.
+func ParseMetadataFlipped(content int, data []byte) (*Metadata, error) {
+	switch content {
+	case MetadataContentOneField:
+		if len(data) < 1 {
+			return nil, errors.New("invalid metadata length for 1 field")
+		}
+
+		return &Metadata{
+			content: content,
+			ioState: data[len(data)-1]}, nil
+
+	case MetadataContentTwoField:
+		if len(data) < 6 {
+			return nil, errors.New("invalid metadata length for 2 field")
+		}
+
+		return &Metadata{
+			content: content,
+			ioState: data[len(data)-1],
+			count:   binary.BigEndian.Uint32(data[len(data)-6 : len(data)-2])}, nil
+
+	case MetadataContentThreeField:
+		if len(data) < 10 {
+			return nil, errors.New("invalid metadata length for 3 field")
+		}
+
+		return &Metadata{
+			content: content,
+			ioState: data[len(data)-1],
+			qcount:  binary.BigEndian.Uint32(data[len(data)-6 : len(data)-2]),
+			count:   binary.BigEndian.Uint32(data[len(data)-10 : len(data)-6])}, nil
 
 	default:
 		return nil, errors.New("invalid metadata field count")
