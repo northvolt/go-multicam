@@ -7,14 +7,14 @@ import (
 )
 
 type Metadata struct {
-	content int
+	content MetadataContentType
 	ioState uint8
 	count   uint32
 	qcount  uint32
 }
 
 // ParseMetadata returns the metadata for a given image frame, for the expected metadata type.
-func ParseMetadata(content int, data []byte) (*Metadata, error) {
+func ParseMetadata(content MetadataContentType, data []byte) (*Metadata, error) {
 	switch content {
 	case MetadataContentOneField:
 		if len(data) < 1 {
@@ -53,7 +53,7 @@ func ParseMetadata(content int, data []byte) (*Metadata, error) {
 
 // ParseMetadataFlipped returns the metadata for a given image frame that has been flipped on the X axis,
 // for the expected metadata type.
-func ParseMetadataFlipped(content int, data []byte) (*Metadata, error) {
+func ParseMetadataFlipped(content MetadataContentType, data []byte) (*Metadata, error) {
 	switch content {
 	case MetadataContentOneField:
 		if len(data) < 1 {
@@ -123,17 +123,17 @@ func (m *Metadata) DIN2() bool {
 }
 
 func (m *Metadata) String() string {
-	s := ""
+	s := m.content.String()
 	switch m.content {
 	case MetadataContentNone:
 		return s
 	case MetadataContentOneField:
-		s = m.ioInfo()
+		s += m.ioInfo()
 	case MetadataContentTwoField:
-		s = m.ioInfo()
+		s += m.ioInfo()
 		s += fmt.Sprintln("count:", m.Count())
 	case MetadataContentThreeField:
-		s = m.ioInfo()
+		s += m.ioInfo()
 		s += fmt.Sprintln("count:", m.Count())
 		s += fmt.Sprintln("qcount:", m.Qcount())
 	}

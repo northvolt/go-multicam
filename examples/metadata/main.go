@@ -12,8 +12,9 @@ var (
 	camfile = flag.String("camfile", "", "CAM file to use for capture")
 	board   = flag.Int("board", 0, "board number to use for capture (default 0)")
 
-	x, y, pitch, content int
-	ch                   *mc.Channel
+	x, y, pitch int
+	content     mc.MetadataContentType
+	ch          *mc.Channel
 )
 
 func main() {
@@ -131,11 +132,12 @@ func SetupCamera() {
 	}
 
 	// Retrieve channel metadatacontent information.
-	content, err = ch.GetParamInt(mc.MetadataContentParam)
+	c, err := ch.GetParamInt(mc.MetadataContentParam)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	content = mc.MetadataContentType(c)
 
 	fmt.Println("metadatacontent:", content)
 
