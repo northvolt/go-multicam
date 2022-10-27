@@ -166,11 +166,14 @@ const (
 	LED = 25
 )
 
+//go:generate go run golang.org/x/tools/cmd/stringer -type MetadataContentType
+type MetadataContentType int
+
 const (
-	MetadataContentNone       = C.MC_MetadataContent_NONE
-	MetadataContentOneField   = C.MC_MetadataContent_ONE_FIELD
-	MetadataContentTwoField   = C.MC_MetadataContent_TWO_FIELD
-	MetadataContentThreeField = C.MC_MetadataContent_THREE_FIELD
+	MetadataContentNone       MetadataContentType = C.MC_MetadataContent_NONE
+	MetadataContentOneField   MetadataContentType = C.MC_MetadataContent_ONE_FIELD
+	MetadataContentTwoField   MetadataContentType = C.MC_MetadataContent_TWO_FIELD
+	MetadataContentThreeField MetadataContentType = C.MC_MetadataContent_THREE_FIELD
 
 	MetadataGPPCInputLineNone          = C.MC_MetadataGPPCInputLine_NONE
 	MetadataGPPCInputLineIIN1          = C.MC_MetadataGPPCInputLine_IIN1
