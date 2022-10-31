@@ -81,6 +81,11 @@ func main() {
 		fmt.Println("Done.")
 	}()
 
+	if err := ch.SetParamStr(mc.ForceTrigParam, "TRIG"); err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for {
 		time.Sleep(time.Second)
 	}
