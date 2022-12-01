@@ -2,7 +2,10 @@ package multicam
 
 // #include <multicam.h>
 import "C"
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type StatusCode
 type StatusCode int32
@@ -207,12 +210,27 @@ const (
 
 // OpenDriver starts up the Multicam drivers.
 func OpenDriver() error {
-	status := StatusCode(C.McOpenDriver(nil))
-	if status != StatusOK {
-		return fmt.Errorf("%s: %w", status.String(), ErrCannotOpenDriver)
-	}
+	// create channel for feedback
+	statusChannel := make(chan StatusCode, 1)
+	timeoutInSec := time.Duration(5)
 
-	initChannels()
+	// start go routine to open driver
+	go func() {
+		status := StatusCode(C.McOpenDriver(nil))
+		statusChannel <- status
+	}()
+
+	select {
+	case status := <-statusChannel:
+		if status != StatusOK {
+			return fmt.Errorf("%s: %w", status.String(), ErrCannotOpenDriver)
+		}
+		initChannels()
+
+		return nil
+	case <-time.After(timeoutInSec * time.Second):
+		return fmt.Errorf("Could not init driver, try restarting PC")
+	}
 
 	return nil
 }
