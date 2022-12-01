@@ -15,4 +15,5 @@ var (
 	ErrCannotDeleteSurface    = errors.New("cannot delete MultiCam surface")
 	ErrInvalidBoard           = errors.New("invalid board")
 	ErrCannotWaitSignal       = errors.New("cannot wait for signal")
+	ErrTimeoutOpenDriver      = errors.New("could not init driver, try restarting PC")
 )
