@@ -229,7 +229,7 @@ func OpenDriver() error {
 
 		return nil
 	case <-time.After(timeoutInSec * time.Second):
-		return fmt.Errorf("Could not init driver, try restarting PC")
+		return ErrTimeoutOpenDriver
 	}
 
 	return nil
