@@ -212,26 +212,27 @@ const (
 func OpenDriver() error {
 	// create channel for feedback
 	statusChannel := make(chan StatusCode, 1)
-	timeoutInSec := time.Duration(5)
+	timeoutInSec := time.Duration(10)
 
-	// start go routine to open driver
+	// start go routine to check timeout
 	go func() {
-		status := StatusCode(C.McOpenDriver(nil))
-		statusChannel <- status
+		select {
+		case <-statusChannel:
+			return
+		case <-time.After(timeoutInSec * time.Second):
+			// using a panic here to so the application ends if this non recoverable error occurs
+			panic("timeout when calling McOpenDriver()")
+		}
 	}()
 
-	select {
-	case status := <-statusChannel:
-		if status != StatusOK {
-			return fmt.Errorf("%s: %w", status.String(), ErrCannotOpenDriver)
-		}
-		initChannels()
+	status := StatusCode(C.McOpenDriver(nil))
+	statusChannel <- status
 
-		return nil
-	case <-time.After(timeoutInSec * time.Second):
-		return ErrTimeoutOpenDriver
+	if status != StatusOK {
+		return fmt.Errorf("%s: %w", status.String(), ErrCannotOpenDriver)
 	}
 
+	initChannels()
 	return nil
 }
 
