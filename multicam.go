@@ -77,6 +77,8 @@ const (
 	ImageFlipXParam            ParamID = C.MC_ImageFlipX
 	ImageSizeXParam            ParamID = C.MC_ImageSizeX
 	ImageSizeYParam            ParamID = C.MC_ImageSizeY
+	InputConfigParam           ParamID = C.MC_InputConfig
+	InputStateParam            ParamID = C.MC_InputState
 	LinePitchParam             ParamID = C.MC_LinePitch
 	LineRateModeParam          ParamID = C.MC_LineRateMode
 	MetadataContentParam       ParamID = C.MC_MetadataContent
