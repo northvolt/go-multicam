@@ -73,6 +73,7 @@ const (
 	EncoderPitchParam          ParamID = C.MC_EncoderPitch
 	ErrorHandlingParam         ParamID = C.MC_ErrorHandling
 	ErrorLogParam              ParamID = C.MC_ErrorLog
+	EqualizationLevelParam     ParamID = C.MC_EqualizationLevel
 	ForceTrigParam             ParamID = C.MC_ForceTrig
 	ImageFlipXParam            ParamID = C.MC_ImageFlipX
 	ImageSizeXParam            ParamID = C.MC_ImageSizeX
